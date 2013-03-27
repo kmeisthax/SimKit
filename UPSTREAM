@@ -1,0 +1,39 @@
+The upstream source for the SimKit library is currently:
+
+    http://github.com/kmeisthax/SimKit
+
+This is a Github hosted git repository with the latest SimKit code.
+You may pull from it to recieve the latest updates to the library.
+
+The upstream git has a number of branches, all of which are important for
+various use cases.
+
+SimKit has release versions and development branches.
+Versioning is currently done as a simple release number - i.e. r001, r002, etc.
+If SimKit adopts a stable API, we will move to semantic versioning and the old
+versions will be referred to as 0.001, 0.002, etc. Release versions will be
+created by adding a new git tag named "sk-" followed by the release number.
+So, for example, checking out sk-r053 will give you the 53rd release version of
+SimKit.
+
+Releasing involves creating a new git ref for the new release and moving the
+master branch to it. In simple cases this, the ref will be a tag, and the master
+branch will be moved directly to that tag. In more complex cases, such as when
+the current release needs to be developed on it's own, a branch will be created
+instead of a tag, additional development will occur on this branch (possibly
+involving extra tags such as "sk-r093-beta4"). In either case, the master branch
+will be moved ahead when a release is completed such that it always points to
+the latest release version.
+
+The core focus of development is the "develop" branch, where most changes to the
+code will be applied to. This is the branch which all releases must start from.
+For large features, topic branches may be created for specific development
+focuses. Code may flow between "develop" and topic branches through merges.
+The name of a topic branch depends on what feature is being focused on.
+
+SimKit may accept contributions in the future.
+
+Currently, this process requires either a copyright assignment or copyright
+licensing agreement to be in my possession before I can accept large
+contributions, as I may sell exceptions to LGPLv3 in the future, or even add new
+Free Software licenses. Contributions may be made with diffs or pull requests.

@@ -1,0 +1,28 @@
+ == SimKit: A realtime 3D graphics framework (aka "game engine") ==
+
+SimKit is a game engine of sorts designed to be able to make C++ gamedev
+slightly less of a hair-pulling nightmare. It provides a number of useful bits
+of code for:
+
+ * Managing gameloop time across fixed and variable timestep simulations
+ * Tracking performance of your application
+ * Structuring a game scene in a renderer-agnostig fashion
+ * Caching loaded resources in memory 
+ * Reference counting
+  (because in 2013 C++ still doesn't ship a memory management solution
+   more complex than "the implementation MIGHT have a GC")
+ * And more as development continues
+
+The main version of this library will be available under Git source control at:
+   git://github.com/kmeisthax/SimKit.git
+
+See the "UPSTREAM" file for more information.
+
+This software is made available under Free Software licensing.
+See the "COPYING" file for more information relating to your rights.
+
+This software is designed to be built as a library, and integrate with other
+Free Software libraries, most notably SDLv2, which is a compile-time dependency.
+See the "BUILDING" file for more information.
+
+

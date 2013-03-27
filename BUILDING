@@ -1,0 +1,46 @@
+SimKit is intended to be built as a library on all platforms. Furthermore, it's
+intended to be built as a shared library on platforms which support it. When
+building SimKit as a shared library, you should declare "SIMKIT_EXPORTS" when
+compiling. When building SimKit as a static library, you should declare
+"SIMKIT_STATIC". When using SimKit, you should declare neither.
+
+Source files are in the "src" directory. All builds of SimKit should include all
+of the source files in this directory. Subdirectories refer to specific optional
+features that SimKit can support on particular platforms. For example, the
+"opengl" folder contains source files for SimKit that allow for rendering on
+OpenGL. To use these files, you should add the source files in this directory to
+your SimKit build, and declare a preprocessor macro named after the directory,
+i.e. "OPENGL".
+
+Includes are in the "include" directory. Add that directory to your include path
+when compiling SimKit or any software that links with SimKit. The subdirectories
+of the "include/simkit" directories work the same way as the source directories.
+
+To use SimKit in your programs, simply include the SimKit header:
+
+    #include <simkit.h>
+
+To use things declared specific to an optional module, e.g. the OpenGL renderer,
+include both the SimKit header and THEN the headers for those optional modules:
+
+    #include <simkit.h>
+    #include <simkit/opengl.h>
+
+Note that including both headers will make this source file dependent on those
+modules, and the underlying platform functionality therein. Therefore, you
+should structure your program similarly to SimKit, such that files that require
+a particular module are only built if that module is available in your build of
+SimKit as well as the underlying platform.
+
+SimKit has a number of required and optional libraries:
+
+    SDL, SDL_image, and SDL_ttf, versions 2 are requred
+        (currently, only available from their mercurial tree)
+    Freetype is required to build, due to SDL_ttf.
+    Any of libpng, libjpeg, libtiff and libwebp are optional
+        (not linking them will mean those formats will be unavailable)
+    zlib is required to build libpng and certain modules of Freetype.
+        (libpng provides it by default,
+         you may want to build yours separately if multiple libraries use it)
+
+

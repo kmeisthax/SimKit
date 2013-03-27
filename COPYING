@@ -1,0 +1,139 @@
+This library is free software: you can redistribute it and/or modify it under
+the terms of the GNU Lesser General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This library is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along
+with this program. If not, see <http://www.gnu.org/licenses/>.
+
+In the standard distribution of SimKit, the GNU Lesser General Public License is
+available in the "lgpl-3.0.txt" file in the "licenses" directory. The GNU
+General Public License, which the GNU Lesser General Public License amends, is
+also available in the "gpl-3.0.txt" file in the "licenses" directory.
+
+The choice of the GNU Lesser General Public License, version 3 (forthwith
+referred to as LGPLv3) was made to balance the concerns of making the library
+useful with not wanting to easily supply proprietary platforms with code. It
+allows SimKit to be used by any project, so long as the following points are
+met:
+
+ * The library is provided with source code available
+ * The user of your software can link new versions of your program, e.g. by
+   replacing the simkit.dll file with a modified version
+ * The user of your software must be able to install a modified version of the
+   library onto the platform your software was destributed on
+   - i.e. you can't distribute on locked-down platforms
+
+You should consider your target platform carefully when taking the Free Software
+license. If you are not familiar with the terms of typical Free Software
+licenses, you should consult a lawyer, especially if your application is to be
+sold as a commercial product.
+
+As far as I am aware, the LGPLv3 status of this library will not restrict
+distribution of applications that use SimKit on the following platforms:
+
+ * Devices which allow users to execute arbitrary code
+   - PCs running operating systems such as Windows, Linux, and Mac OS X
+   - Consoles such as the OUYA
+   - Handhelds such as OpenPandora
+   - Smartphones and tablets running Android that allow users to install
+     non-Market applications
+ * Application stores on devices of the above categories
+   - PC-focused gaming stores (e.g. Steam, Desura, and so on)
+    (Some stores have NDAs regarding their security APIs.
+     You should consider how this will affect your ability to comply with the
+     source code distribution and licensing requirements, and design your
+     applications accordingly.)
+   - Mac App Store
+   - Android Market
+    (Excluding devices which do not allow users to install non-Market apps.
+     These are rare, as far as I remember AT&T was the only carrier that tried
+     to block Android application development, and they lifted it shortly after.
+     Nevertheless, you may want to consider blocking sales of your application
+     on such devices.)
+ * Devices which have been modified to allow users to install arbitrary code,
+   or applications stores only available to users who have done so
+   - Cydia and other similar alternative iPhone app stores
+   - Homebrew loaders for otherwise locked-down consoles
+     e.g. the Homebrew Channel (Wii)
+   - Application sources for the above, e.g. teknecal's Homebrew Browser
+
+This list is non-inclusive and further platforms may also comply with the LGPLv3
+source-code disclosure and Installation Instructions requirement. Here is a
+non-inclusive list of platforms known *not* to comply with this requirement:
+
+ * Platforms where licensees aren't allowed to provide Installation Instructions
+   or disclose source code
+   - All Nintendo platforms, e.g. the Nintendo Wii, DS, DSi, 3DS, Wii U
+   - Microsoft platforms that check software authenticity against a public key
+     e.g. the Xbox 360, and Windows Store "Modern UI" applications
+   - Sony platforms that check software authenticity against a public key
+     e.g. the PlayStation 3, PlayStation Portable / Vita
+ * App stores on the above platforms
+   - iOS App Store
+   - Nintendo eShop
+   - PlayStation Store
+   - Windows Store
+
+Please note, however, that many of these platforms listed also have EULAs
+prohibiting compliance with the (L)GPL's prohibition on additional terms of use.
+For example, one cannot distribute GPL software on the iOS App Store, because
+Apple adds additional legal terms incompatible with any version of the GPL.
+
+Additionally, this library requires Freetype, which can be used under GPL terms
+or it's own custom FreeType license. The FreeType license requires the following
+mandatory attribution statement:
+
+    Portions of this software are copyright ©2013 The FreeType
+    Project (www.freetype.org).  All rights reserved.
+
+Anyone including SimKit in their program must also include FreeType, and thus,
+must include this statement. The GPL terms are version 2 or greater; however,
+you cannot use SimKit with GPLv2 software, as even though LGPLv3 allows linking
+with another license, it imposes additional restrictions on the distribution of
+the software which GPLv2 explicitly prohibits. Thus, if you choose to take the
+GPL terms, you must take them as version 3 or any later version. This should not
+affect most users of SimKit.
+
+If you wish to use SimKit in a project where LGPLv3 licensing is unacceptable,
+please contact the main developer, David Wendt <dcrkid@yahoo.com>. I may be able
+to assist you. Generally, if your project is Free, but incompatible with LGPLv3,
+I could extend the project's licensing terms to allow users to take SimKit with
+different terms, so long as those terms also comply with the Free Software
+definition.
+
+If you need to use SimKit in a proprietary software project, I would be willing
+to sell an exception. We would have to negotiate additional terms, including
+potential up-front or per-unit royalties. Additionally, I would prefer to have
+any modifications to SimKit done during the development of the excepted project
+to be recontributed back to me for publication under the normal licensing terms
+(as well as provision to future excepted parties).
+
+If source recontribution is untenable, e.g. you are writing a game for platforms
+whose SDKs are under NDA, then the cost of an exception will increase. However,
+I would prefer not having a blanket no-contribution exception. For example, I
+would be fine with an exception saying "Use the latest SimKit and make the
+minimum number of modifications necessary to support the Nintendo 3DS". I would
+not be fine with an exception saying "Use the latest SimKit, add ten million new
+features to it, and never release it to anyone". In cases where the NDA allows
+me to accept the code, e.g. if I become a licensed console developer in the
+future, I will ask for custodianship over your branch of the code such that the
+resulting code can be shared among other parties under the same NDA.
+
+I cannot legally except the FreeType attribution requirement. I do not own the
+code in question, so you must comply with it. However, I know of no platform
+where doing so is not allowed.
+
+Naturally, since I may sell exceptions in the future, contributions to this
+project will require either total copyright assignment or a worldwide,
+non-exclusive, royalty-free license basis. Minor contributions such as small bug
+fixes may not require such scrutiny. In any case, sending contributions to me
+indicates that you are okay with this, but I may ask for signed consent
+documentation for contributions that include any major new code or features.
+
+i.e. Sending a bugfix or something else that's obvious, I'll just accept it.
+Sending something big like Bullet or ODE integration, I'll probably want docs.
