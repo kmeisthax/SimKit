@@ -26,15 +26,33 @@
 #include "simkit/deletehook.h"
 
 /* -- * -- Pointer types -- * -- */
-#include "simkit/ref.h"
+#include "simkit/ref.hpp"
 
-/* -- * -- Resource loading -- * -- */
+/* -- * -- Concrete resource management -- * -- */
 #include "simkit/loader.h"          //Resource locators
 #include "simkit/stdloader.h"
-#include "simkit/vimage.h"          //Image renderers
-#include "simkit/bitmapvimage.h"
-#include "simkit/vfont.h"           //Font renderers
-#include "simkit/ttfvfont.h"
+
+/* -- * -- Virtual resource management -- * -- */
+#include "simkit/vresource.hpp"     //Base class
+
+#include "simkit/imagecache.h"      //Virtual textures/images
+#include "simkit/vimage.h"
+#include "simkit/bitmapvimage.h"    //SDL_image loader
+
+#include "simkit/meshcache.hpp"     //Virtual mesh data
+#include "simkit/vmeshdata.h"
+
+/* -- * -- Font rendering -- * -- */
+#include "simkit/fontloader.h"
+#include "simkit/font.h"           
+#include "simkit/ttffont.h"        //SDL_TTF font loader
+
+/* -- * -- 3D scene structuring -- * -- */
+#include "simkit/scene.h"
+#include "simkit/scenenode.h"
+
+/* -- * -- Screen rendering -- * -- */
+#include "simkit/renderer.h"
 
 /* -- * -- Error handling -- * -- */
 #include "simkit/emergency.h"
