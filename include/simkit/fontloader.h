@@ -25,7 +25,7 @@ namespace SimKit {
          * makes points equivalent to pixels; however, most monitors are higher
          * DPI than 1980s era Macintosh screens and you should change this.
          */
-        IVFont* load_font(const std::string font_name, const float points, const float screen_dpi = 72.0f);
+        IFont* load_font(const std::string font_name, const float points, const float screen_dpi = 72.0f);
     };
 }
 

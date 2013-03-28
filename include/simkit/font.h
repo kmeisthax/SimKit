@@ -7,14 +7,14 @@
 namespace SimKit {
     class MRefCount;
     
-    /* A Virtual Font represents an object which can render glyphs onto SDL surfaces.
+    /* A Font represents an object which can render glyphs onto SDL surfaces.
      * 
      */
-    class SIMKIT_API IVFont : public virtual MRefCount {
+    class SIMKIT_API IFont : public virtual MRefCount {
     protected:
-        IVFont();
+        IFont();
     public:
-        virtual ~IVFont() = 0;
+        virtual ~IFont() = 0;
         
         /* -- Line metrics data--
          * 
