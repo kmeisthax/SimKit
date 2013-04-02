@@ -11,7 +11,11 @@ namespace SimKit {
      * it on screen.
      */
     class SIMKIT_API IRenderer : public virtual ITask {
+    protected:
+        IRenderer();
     public:
+        virtual ~IRenderer() = 0;
+        
         /* Set the target window or texture to render to.
          * 
          * Optionally, you may specify a viewport; a rectangle such that only
