@@ -55,6 +55,7 @@
 
 /* -- * -- Screen rendering -- * -- */
 #include "simkit/renderer.h"
+#include "simkit/scenerenderer.h"   //Subclass which uses the default 3D scene structure
 
 /* -- * -- Error handling -- * -- */
 #include "simkit/emergency.h"
