@@ -30,7 +30,7 @@ namespace SimKit {
         };
         
         virtual ~Ref() {
-            this->parent->dec_ref();
+            if (this->parent) this->parent->dec_ref();
         };
         
         referenced_type& operator*() const {
@@ -40,8 +40,8 @@ namespace SimKit {
         referenced_type& operator->() const {
             return *this->parent;
         };
-
-        TRef<referenced_type> operator=(referenced_type& parent) {
+        
+        TRef<referenced_type> operator=(referenced_type* parent) {
             if (&parent == this->parent) return;
             
             if (this->parent) this->parent->dec_ref();
@@ -50,10 +50,16 @@ namespace SimKit {
             
             return this;
         };
-
+        
         TRef<referenced_type> operator=(TRef<referenced_type>& f) {
-            return *this = *f.parent;
+            return *this = f->parent;
         };
+
+        friend referenced_type* operator=(referenced_type*& that, TRef<referenced_type>& f);
+    };
+    
+    referenced_type* operator=(referenced_type*& that, TRef<referenced_type>& f) {
+        return that = f.parent;
     };
 }
 
