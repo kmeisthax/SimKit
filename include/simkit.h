@@ -50,6 +50,7 @@
 /* -- * -- 3D scene structuring -- * -- */
 #include "simkit/scene.h"
 #include "simkit/scenenode.h"
+#include "simkit/material.h"
 
 /* -- * -- Screen rendering -- * -- */
 #include "simkit/renderer.h"
