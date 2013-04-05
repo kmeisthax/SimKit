@@ -10,6 +10,7 @@ namespace SimKit {
     /* A SceneNode structures renderables within a scene.
      */
     class SIMKIT_API ISceneNode {
+        ISceneNode* m_parent;
         std::vector<ISceneNode*> m_children;
     protected:
         ISceneNode();
@@ -45,6 +46,8 @@ namespace SimKit {
         virtual void insert_child(ISceneNode* child, std::vector<ISceneNode*>::iterator place);
         virtual void remove_child(ISceneNode* child);
         virtual void remove_child(std::vector<ISceneNode*>::iterator place);
+        
+        virtual ISceneNode* parent();
     };
 }
 

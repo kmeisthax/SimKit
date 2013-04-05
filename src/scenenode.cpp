@@ -2,7 +2,7 @@
 
 #include <glm/matrix_transform.cpp>
 
-SimKit::ISceneNode::ISceneNode() {};
+SimKit::ISceneNode::ISceneNode() : m_parent(NULL) {};
 SimKit::ISceneNode::~ISceneNode() {};
 
 void SimKit::ISceneNode::get_transform(glm::mat4* out_matr) {
@@ -33,24 +33,32 @@ std::vector<ISceneNode*>::size_type SimKit::ISceneNode::children_size() {
 };
 
 void SimKit::ISceneNode::append_child(SimKit::ISceneNode* child) {
+    child->m_parent = this;
     this->m_children.push_back(child);
 };
 
 void SimKit::ISceneNode::insert_child(SimKit::ISceneNode* child, std::vector<SimKit::ISceneNode*>::iterator place) {
+    child->m_parent = this;
     this->m_children.insert(child, place);
 };
 
 void SimKit::ISceneNode::remove_child(std::vector<SimKit::ISceneNode*>::iterator place) {
+    (*place)->m_parent = NULL;
     this->m_children.erase(place);
 };
 
 void SimKit::ISceneNode::remove_child(SimKit::ISceneNode* child) {
     for (std::vector<SimKit::ISceneNode*>::iterator i = this->children_begin(); i != this->children_end(); i++) {
         if (*i == child) {
+            (*i)->m_parent = NULL;
             this->remove_child(i);
             return;
         }
     }
+};
+
+SimKit::ISceneNode* SimKit::ISceneNode::parent() {
+    return this->m_parent;
 };
 
 #endif
