@@ -16,6 +16,9 @@
     #define SIMKIT_API
 #endif
 
+/* Defines for upstream libraries */
+#define GLM_SWIZZLE
+
 /* -- * -- Gameloop organization and structure -- * -- */
 #include "simkit/task.h"
 #include "simkit/taskmaster.h"
@@ -52,6 +55,7 @@
 #include "simkit/scenenode.h"
 #include "simkit/renderable.h"
 #include "simkit/material.h"
+#include "simkit/camera.h"
 
 /* -- * -- Screen rendering -- * -- */
 #include "simkit/renderer.h"
