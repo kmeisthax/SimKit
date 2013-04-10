@@ -1,4 +1,4 @@
-#include "../simkit/stdloader.h"
+#include <simkit.h>
 
 #include <memory>
 #include <direct.h>

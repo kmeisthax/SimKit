@@ -102,7 +102,7 @@ namespace SimKit {
         /* Change the timeline this task reports performance information to.
          */
         virtual void attach_to_timeline(ITimeline* timeline);
-
+        
         /* Indicate to a task when processing on that task has started or ended.
          * Neither of these methods are mandatory; the default is to do nothing.
          * 
