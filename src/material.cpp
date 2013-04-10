@@ -16,12 +16,11 @@ void SimKit::Material::map_material_parameter(const SimKit::Material::Parmeter p
     this->m_params[param] = spc;
 };
 
-void SimKit::Material::map_material_parameter(const SimKit::Material::Parmeter param, const SimKit::Material::ParamSwizzle swiz) {
+void SimKit::Material::map_material_parameter_as_normal(const SimKit::Material::Parmeter param) {
     SimKit::Material::ParamSpec spc;
 
     spc.param = param;
     spc.mapping = SimKit::Material::PT_NORMAL;
-    spc.swiz = swiz;
     
     this->m_params[param] = spc;
 };

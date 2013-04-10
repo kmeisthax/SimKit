@@ -76,7 +76,7 @@ namespace SimKit {
             float constant[4];
             
             //Useful for varying parameters only
-            ParamSwizzle swiz;       //Rearranges parameter vectors
+            ParamSwizzle swiz;       //Rearranges parameter vectors (const, attrib, uvmaps only)
             std::string attrib_name; //can also be used to identify a UV map
             int attrib_id;           //same as above, but direct ID number
                                      //if name is empty string, id is used instead
@@ -87,17 +87,17 @@ namespace SimKit {
         ~Material();
         
         void map_material_parameter(const Parmeter param, const float constant[4]);
-        void map_material_parameter(const Parmeter param, const ParamSwizzle swiz);
+        void map_material_parameter_as_normal(const Parmeter param);
         void map_material_parameter(const Parmeter param, const std::string attrib_name, const ParamSwizzle swiz);
         void map_material_parameter(const Parmeter param, const std::string uvmap_name, const ParamSwizzle swiz, IVImage* vtex);
         void map_material_parameter(const Parmeter param, const int attrib_id, const ParamSwizzle swiz);
         void map_material_parameter(const Parmeter param, const int uvmap_id, const ParamSwizzle swiz, IVImage* vtex);
-
+        
         ParamType get_material_parameter_mapping(const Parameter param);
         void get_material_parameter(const Parameter param, float out_constant[4]);
         void get_material_parameter(const Parameter param, std::string &out_attrib_name, int *out_attrib_id, ParamSwizzle *out_swiz);
         void get_material_parameter(const Parameter param, std::string &out_uvmap_name, int *out_uvmap_id, ParamSwizzle *out_swiz, IVImage** out_vtex);
-
+        
         void unmap_material_parameter(const Parameter param);
     private:
         std::map<Parameter, ParamSpec> m_params;
