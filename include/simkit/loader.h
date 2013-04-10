@@ -13,6 +13,10 @@ namespace SimKit {
         virtual ~ILoader() = 0;
         
         /* Open a named resource and return an istream which can read the contents of the resource.
+         * 
+         * If the resource does not exist, return NULL.
+         * 
+         * Resource names are specified as strings.
          */
         virtual std::istream* open_resource(std::string name, std::ios_base::openmode mode = std::ios_base::in) = 0;
     };

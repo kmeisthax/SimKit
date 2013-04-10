@@ -30,8 +30,11 @@ std::istream* SimKit::StdLoader::open_resource(std::string name, std::ios_base::
         std::ifstream *out = new std::ifstream(name.c_str(), mode);
         _chdir(curdir);
         free(curdir);
-        
-        return out;
+
+        if (out->fail()) {
+            delete out;
+            return NULL;
+        } else return out;
     } catch (std::exception& e) {
         _chdir(curdir);
         free(curdir);
