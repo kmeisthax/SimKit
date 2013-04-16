@@ -32,16 +32,9 @@ namespace SimKit {
      *   on the context side and replacing it with new data. They will return
      *   the new data value (which may or may not be different).
      *  
-     *  gpu_data_type destroy_data(gpu_context_type, gpu_data_type),
-     *  gpu_data_type null(gpu_context_type):
-     *   Two functions that return the null value for the type. A "null value"
-     *   exists specifically to indicate that there is no data on the context's
-     *   side at all.
-     *   
+     *  void destroy_data(gpu_context_type, gpu_data_type):
      *   The "destroy_data" variant takes a data value, destroys the data, and
-     *   returns the null value. It is legal to call destroy_data with the
-     *   context's null value; in this case the function should do nothing but
-     *   return.
+     *   returns nothing.
      */
     template <typename gpu_context_type, typename gpu_data_type, typename gpu_traits>
     class SIMKIT_API TMeshCache : public virtual MDeleteHook::IHandler, public virtual IVMeshData::IRequest::IListener {
@@ -49,11 +42,12 @@ namespace SimKit {
         struct HWCacheData {
             gpu_context_type context;
             gpu_data_type vertex_data, index_data, normal_data;
+            bool vertex_isnull, index_isnull, normal_isnull;
             
             std::map<int, gpu_data_type> uvmap_data;
             std::map<int, gpu_data_type> attrib_data;
         };
-
+        
         struct FloatArray {
             float* data;
             int count;
@@ -75,9 +69,9 @@ namespace SimKit {
         std::map<IVMeshData*, CacheData> cache;
         
         enum MeshDataType {
-            VERTEX_DATA, INDEX_DATA, NORMAL_DATA, UVMAP_DATA, ATTRIB_DATA, NULL_DATA
+            VERTEX_DATA, INDEX_DATA, NORMAL_DATA, UVMAP_DATA, ATTRIB_DATA
         };
-
+        
         void ensure_request_exists(IVMeshData* vmesh, const float desired_quality) {
             if (this->cache.count(vmesh) == 0) {
                 this->add_mesh_to_cache(vmesh);
@@ -95,9 +89,9 @@ namespace SimKit {
 
                 hcd.first = ctxt;
                 hcd.second.context = ctxt;
-                hcd.second.vertex_data = gpu_traits::null(ctxt);
-                hcd.second.index_data = gpu_traits::null(ctxt);
-                hcd.second.normal_data = gpu_traits::null(ctxt);
+                hcd.second.vertex_isnull = true;
+                hcd.second.index_isnull = true;
+                hcd.second.normal_isnull = true;
                 
                 this->cache[vmesh].hw.insert(hcd);
             }
@@ -112,7 +106,7 @@ namespace SimKit {
                 this->cache[vmesh].attrib_data.insert(attrib_pair);
             }
         };
-
+        
         void ensure_uvmap_loaded(IVMeshData* vmesh, const int uvmap_id) {
             //Assumes request exists, has completed, and uvmap exists
             if (this->cache[vmesh].uvmap_data.count(uvmap_id) == 0) {
@@ -224,13 +218,15 @@ namespace SimKit {
                 
                 this->ensure_context_exists(vmesh, ctxt);
                 
-                if (this->cache[vmesh].hw[ctxt].vertex_data != gpu_traits::null(ctxt)) {
+                if (!this->cache[vmesh].hw[ctxt].vertex_isnull) {
                     if (out_data) *out_data = this->cache[vmesh].hw[ctxt].vertex_data;
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
                 
                 if (this->cache[vmesh].vertex_data) {
                     this->cache[vmesh].hw[ctxt].vertex_data = gpu_traits::upload_data(ctxt, this->cache[vmesh].vertex_data, this->cache[vmesh].vertex_count, VERTEX_DATA, vmesh->get_usage_frequency());
+                    this->cache[vmesh].hw[ctxt].vertex_isnull = false;
+                    
                     if (out_data) *out_data = this->cache[vmesh].hw[ctxt].vertex_data;
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
@@ -285,13 +281,15 @@ namespace SimKit {
                 
                 this->ensure_context_exists(vmesh, ctxt);
                 
-                if (this->cache[vmesh].hw[ctxt].index_data != gpu_traits::null(ctxt)) {
+                if (!this->cache[vmesh].hw[ctxt].index_isnull) {
                     if (out_data) *out_data = this->cache[vmesh].hw[ctxt].index_data;
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
                 
                 if (this->cache[vmesh].index_data) {
                     this->cache[vmesh].hw[ctxt].index_data = gpu_traits::upload_data(ctxt, this->cache[vmesh].index_data, this->cache[vmesh].index_count, INDEX_DATA, vmesh->get_usage_frequency());
+                    this->cache[vmesh].hw[ctxt].index_isnull = false;
+                    
                     if (out_data) *out_data = this->cache[vmesh].hw[ctxt].index_data;
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
@@ -357,13 +355,15 @@ namespace SimKit {
                 
                 this->ensure_context_exists(vmesh, ctxt);
                 
-                if (this->cache[vmesh].hw[ctxt].normal_data != gpu_traits::null(ctxt)) {
+                if (!this->cache[vmesh].hw[ctxt].normal_isnull) {
                     if (out_data) *out_data = this->cache[vmesh].hw[ctxt].normal_data;
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
                 
                 if (this->cache[vmesh].normal_data) {
                     this->cache[vmesh].hw[ctxt].normal_data = gpu_traits::upload_data(ctxt, this->cache[vmesh].normal_data, this->cache[vmesh].normal_count, NORMAL_DATA, vmesh->get_usage_frequency());
+                    this->cache[vmesh].hw[ctxt].normal_isnull = false;
+                    
                     if (out_data) *out_data = this->cache[vmesh].hw[ctxt].normal_data;
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
@@ -431,7 +431,7 @@ namespace SimKit {
                 this->ensure_context_exists(vmesh, ctxt);
                 this->ensure_attribute_loaded(vmesh, attrib_id);
                 
-                if (this->cache[vmesh].hw[ctxt].attrib_data.count(attrib_id) > 0 && this->cache[vmesh].hw[ctxt].attrib_data[attrib_id] != gpu_traits::null(ctxt)) {
+                if (this->cache[vmesh].hw[ctxt].attrib_data.count(attrib_id) > 0) {
                     if (out_has_attrib) *out_has_attrib = this->cache[vmesh].loaded_mesh->has_attrib(attrib_id);
                     if (out_data) *out_data = this->cache[vmesh].hw[ctxt].attrib_data[attrib_id];
                     return this->cache[vmesh].loaded_mesh->check_request_status();
@@ -507,7 +507,7 @@ namespace SimKit {
                 this->ensure_context_exists(vmesh, ctxt);
                 this->ensure_uvmap_loaded(vmesh, uvmap_id);
                 
-                if (this->cache[vmesh].hw[ctxt].uvmap_data.count(uvmap_id) > 0 && this->cache[vmesh].hw[ctxt].uvmap_data[uvmap_id] != gpu_traits::null(ctxt)) {
+                if (this->cache[vmesh].hw[ctxt].uvmap_data.count(uvmap_id) > 0) {
                     if (out_has_uvmap) *out_has_uvmap = this->cache[vmesh].loaded_mesh->has_uvmap(uvmap_id);
                     if (out_data) *out_data = this->cache[vmesh].hw[ctxt].uvmap_data[uvmap_id];
                     return this->cache[vmesh].loaded_mesh->check_request_status();
