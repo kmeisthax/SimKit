@@ -6,5 +6,6 @@
 /* -- * -- OpenGL-specific includes -- * -- */
 
 #include "opengl/renderbase.h"
+#include "opengl/meshcache.h"
 
 #endif
