@@ -7,12 +7,12 @@
 #include <istream>
 
 namespace SimKit {
-    class IRenderer;
+    class ISceneRenderer;
     
     namespace OpenGL {
         /* Support class for all OpenGL rendering.
          */
-        class SIMKIT_API RenderBase : public virtual IRenderer {
+        class SIMKIT_API RenderBase : public virtual ISceneRenderer {
         private:
         protected:
             /* Compile a shader, given an istream that yields the shader source,
