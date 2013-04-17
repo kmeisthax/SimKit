@@ -8,6 +8,7 @@
 
 namespace SimKit {
     class ISceneRenderer;
+    class ISceneNode;
     
     namespace OpenGL {
         /* Support class for all OpenGL rendering.
@@ -29,9 +30,19 @@ namespace SimKit {
              */
             GLuint compile_shader(GLenum type, std::istream* src);
 
-            /* 
+            /* Given a node, execute OpenGL commands suitable to render it.
+             * 
+             * This function is responsible for setting up 
+             * 
+             * This function can be overridden by subclasses in order to change
+             * how rendering works.
              */
+            virtual void render_node(ISceneNode* node, ICamera* cam) = 0;
+            
+            RenderBase();
         public:
+            virtual ~RenderBase() = 0;
+            
             /* Determine if OpenGL or OpenGL|ES is being used. */
             enum HardwareMode { GL_DESKTOP, GL_ES };
             HardwareMode get_gl_mode();
