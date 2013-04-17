@@ -5,6 +5,7 @@
 
 /* -- * -- OpenGL-specific includes -- * -- */
 
+#include "opengl/contextmgmt.h"
 #include "opengl/renderbase.h"
 #include "opengl/meshcache.h"
 #include "opengl/deferredrenderer.h"
