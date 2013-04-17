@@ -24,8 +24,6 @@ namespace SimKit {
          */
         virtual void set_render_target(SDL_Window* wnd) = 0;
         virtual void set_render_target(SDL_Window* wnd, const SDL_Rect viewport) = 0;
-        virtual void set_render_target(SDL_Texture* tex) = 0;
-        virtual void set_render_target(SDL_Texture* tex, const SDL_Rect viewport) = 0;
     };
 };
 
