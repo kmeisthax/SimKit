@@ -142,8 +142,12 @@ namespace SimKit {
         };
         
         /* Retrieve the underlying mesh data.
+         * 
+         * The quality parameter indicates the quality desired; the returned
+         * request may be for ANY quality.
          */
-        IRequest* get_mesh_data(const float desired_quality, float* out_realquality);
+        IRequest* get_mesh_data(const float desired_quality);
+        IRequest* get_mesh_data(const float desired_quality, IRequest::IListener* listen);
     }
     
     //If you don't like triply nested classes, use these typedefs
