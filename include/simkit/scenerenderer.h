@@ -6,6 +6,7 @@
 namespace SimKit {
     class IRenderer;
     class IScene;
+    class ICamera;
 
     /* A Renderer that takes ISceneNode(s) as data.
      */
@@ -14,8 +15,12 @@ namespace SimKit {
         ISceneRenderer();
     public:
         virtual ~ISceneRenderer() = 0;
-        
-        virtual void set_scene_root(IScene* root) = 0;
+
+        /* Specify the scene to render and what viewpoint to render from.
+         * 
+         * The Camera must be a member of the Scene.
+         */
+        virtual void set_scene_root(IScene* scene, ICamera* cam) = 0;
     };
 };
 
