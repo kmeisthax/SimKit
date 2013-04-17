@@ -85,7 +85,7 @@ namespace SimKit {
              * The arrays must be allocated with new[], not malloc, as they are
              * to be freed with delete[], not free.
              */
-            virtual void get_vertexes(float** out_data, int* out_numfloats) = 0;
+            virtual void get_verticies(float** out_data, int* out_numfloats) = 0;
             
             /* Retrieve index data as a list of integers.
              * 
