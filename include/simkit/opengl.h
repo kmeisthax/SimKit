@@ -7,5 +7,6 @@
 
 #include "opengl/renderbase.h"
 #include "opengl/meshcache.h"
+#include "opengl/deferredrenderer.h"
 
 #endif
