@@ -25,6 +25,6 @@ std::istream* SimKit::MultiLoader::open_resource(std::string name, std::ios_base
             }
         }
     }
-
+    
     return out;
 };
