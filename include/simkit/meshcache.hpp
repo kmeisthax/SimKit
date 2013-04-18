@@ -19,10 +19,10 @@ namespace SimKit {
      *  GPU context.
      * 
      * gpu_traits: A class with the following static helper functions:
-     *  gpu_data_type upload_data(gpu_context_type, float*, int, MeshDataType, IVMeshData::Usage),
-     *  gpu_data_type upload_data(gpu_context_type, int*, int, MeshDataType, IVMeshData::Usage),
-     *  gpu_data_type upload_data(gpu_context_type, float*, int, MeshDataType, IVMeshData::Usage, gpu_data_type),
-     *  gpu_data_type upload_data(gpu_context_type, int*, int, MeshDataType, IVMeshData::Usage, gpu_data_type):
+     *  gpu_data_type upload_data(gpu_context_type, float*, int, MeshDataType, IVMeshData::Usage, bool*),
+     *  gpu_data_type upload_data(gpu_context_type, int*, int, MeshDataType, IVMeshData::Usage, bool*),
+     *  gpu_data_type upload_data(gpu_context_type, float*, int, MeshDataType, IVMeshData::Usage, gpu_data_type, bool*),
+     *  gpu_data_type upload_data(gpu_context_type, int*, int, MeshDataType, IVMeshData::Usage, gpu_data_type, bool*):
      *   Given a float or int array and it's size, allocate context-specific
      *   data for this type and return it to us. The MeshDataType indicates if
      *   the data is vertex data, index data, normals, uvs, or attributes. Usage
@@ -31,6 +31,9 @@ namespace SimKit {
      *   The latter two functions update existing gpu_data, destroying the data
      *   on the context side and replacing it with new data. They will return
      *   the new data value (which may or may not be different).
+     *   
+     *   The additional boolean pointer is set FALSE if uploading failed for any
+     *   reason.
      *  
      *  void destroy_data(gpu_context_type, gpu_data_type):
      *   The "destroy_data" variant takes a data value, destroys the data, and
@@ -224,11 +227,15 @@ namespace SimKit {
                 }
                 
                 if (this->cache[vmesh].vertex_data) {
-                    this->cache[vmesh].hw[ctxt].vertex_data = gpu_traits::upload_data(ctxt, this->cache[vmesh].vertex_data, this->cache[vmesh].vertex_count, VERTEX_DATA, vmesh->get_usage_frequency());
-                    this->cache[vmesh].hw[ctxt].vertex_isnull = false;
-                    
-                    if (out_data) *out_data = this->cache[vmesh].hw[ctxt].vertex_data;
-                    return this->cache[vmesh].loaded_mesh->check_request_status();
+                    bool it_worked = false;
+                    this->cache[vmesh].hw[ctxt].vertex_data = gpu_traits::upload_data(ctxt, this->cache[vmesh].vertex_data, this->cache[vmesh].vertex_count, VERTEX_DATA, vmesh->get_usage_frequency(), &it_worked);
+
+                    if (it_worked) {
+                        this->cache[vmesh].hw[ctxt].vertex_isnull = false;
+                        
+                        if (out_data) *out_data = this->cache[vmesh].hw[ctxt].vertex_data;
+                        return this->cache[vmesh].loaded_mesh->check_request_status();
+                    }
                 }
                 
                 this->invalidate_mesh(vmesh);
@@ -287,11 +294,15 @@ namespace SimKit {
                 }
                 
                 if (this->cache[vmesh].index_data) {
-                    this->cache[vmesh].hw[ctxt].index_data = gpu_traits::upload_data(ctxt, this->cache[vmesh].index_data, this->cache[vmesh].index_count, INDEX_DATA, vmesh->get_usage_frequency());
-                    this->cache[vmesh].hw[ctxt].index_isnull = false;
-                    
-                    if (out_data) *out_data = this->cache[vmesh].hw[ctxt].index_data;
-                    return this->cache[vmesh].loaded_mesh->check_request_status();
+                    bool it_worked = false;
+                    this->cache[vmesh].hw[ctxt].index_data = gpu_traits::upload_data(ctxt, this->cache[vmesh].index_data, this->cache[vmesh].index_count, INDEX_DATA, vmesh->get_usage_frequency(), &it_worked);
+
+                    if (it_worked) {
+                        this->cache[vmesh].hw[ctxt].index_isnull = false;
+                        
+                        if (out_data) *out_data = this->cache[vmesh].hw[ctxt].index_data;
+                        return this->cache[vmesh].loaded_mesh->check_request_status();
+                    }
                 }
                 
                 this->invalidate_mesh(vmesh);
@@ -361,11 +372,15 @@ namespace SimKit {
                 }
                 
                 if (this->cache[vmesh].normal_data) {
-                    this->cache[vmesh].hw[ctxt].normal_data = gpu_traits::upload_data(ctxt, this->cache[vmesh].normal_data, this->cache[vmesh].normal_count, NORMAL_DATA, vmesh->get_usage_frequency());
-                    this->cache[vmesh].hw[ctxt].normal_isnull = false;
-                    
-                    if (out_data) *out_data = this->cache[vmesh].hw[ctxt].normal_data;
-                    return this->cache[vmesh].loaded_mesh->check_request_status();
+                    bool it_worked = false;
+                    this->cache[vmesh].hw[ctxt].normal_data = gpu_traits::upload_data(ctxt, this->cache[vmesh].normal_data, this->cache[vmesh].normal_count, NORMAL_DATA, vmesh->get_usage_frequency(), &it_worked);
+
+                    if (it_worked) {
+                        this->cache[vmesh].hw[ctxt].normal_isnull = false;
+                        
+                        if (out_data) *out_data = this->cache[vmesh].hw[ctxt].normal_data;
+                        return this->cache[vmesh].loaded_mesh->check_request_status();
+                    }
                 }
                 
                 this->invalidate_mesh(vmesh);
@@ -438,9 +453,15 @@ namespace SimKit {
                 }
                 
                 if (this->cache[vmesh].attrib_data[attrib_id].data) {
-                    this->cache[vmesh].hw[ctxt].attrib_data[attrib_id] = gpu_traits::upload_data(ctxt, this->cache[vmesh].attrib_data[attrib_id].data, this->cache[vmesh].attrib_data[attrib_id].count, ATTRIB_DATA, vmesh->get_usage_frequency());
-                    if (out_data) *out_data = this->cache[vmesh].hw[ctxt].attrib_data[attrib_id];
-                    return this->cache[vmesh].loaded_mesh->check_request_status();
+                    bool it_worked = false;
+                    this->cache[vmesh].hw[ctxt].attrib_data[attrib_id] = gpu_traits::upload_data(ctxt, this->cache[vmesh].attrib_data[attrib_id].data, this->cache[vmesh].attrib_data[attrib_id].count, ATTRIB_DATA, vmesh->get_usage_frequency(), &it_worked);
+                    
+                    if (it_worked) {
+                        if (out_data) *out_data = this->cache[vmesh].hw[ctxt].attrib_data[attrib_id];
+                        return this->cache[vmesh].loaded_mesh->check_request_status();
+                    } else {
+                        this->cache[vmesh].hw[ctxt].attrib_data.erase(attrib_id);
+                    }
                 }
                 
                 this->invalidate_mesh(vmesh);
@@ -514,9 +535,15 @@ namespace SimKit {
                 }
                 
                 if (this->cache[vmesh].uvmap_data[uvmap_id].data) {
-                    this->cache[vmesh].hw[ctxt].uvmap_data[uvmap_id] = gpu_traits::upload_data(ctxt, this->cache[vmesh].uvmap_data[uvmap_id].data, this->cache[vmesh].uvmap_data[uvmap_id].count, UVMAP_DATA, vmesh->get_usage_frequency());
-                    if (out_data) *out_data = this->cache[vmesh].hw[ctxt].uvmap_data[uvmap_id];
-                    return this->cache[vmesh].loaded_mesh->check_request_status();
+                    bool it_worked = false;
+                    this->cache[vmesh].hw[ctxt].uvmap_data[uvmap_id] = gpu_traits::upload_data(ctxt, this->cache[vmesh].uvmap_data[uvmap_id].data, this->cache[vmesh].uvmap_data[uvmap_id].count, UVMAP_DATA, vmesh->get_usage_frequency(), &it_worked);
+
+                    if (it_worked) {
+                        if (out_data) *out_data = this->cache[vmesh].hw[ctxt].uvmap_data[uvmap_id];
+                        return this->cache[vmesh].loaded_mesh->check_request_status();
+                    } else {
+                        this->cache[vmesh].hw[ctxt].uvmap_data.erase(uvmap_id);
+                    }
                 }
                 
                 this->invalidate_mesh(vmesh);

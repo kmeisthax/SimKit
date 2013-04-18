@@ -13,10 +13,10 @@ namespace SimKit {
             MeshCache();
             virtual ~MeshCache();
 
-            GLuint upload_data(SDL_GLContext ctxt, const float* data, const int count, const TMeshCache<SDL_GLContext, GLuint, MeshCache>::MeshDataType type, const IVMeshData::Usage usage);
-            GLuint upload_data(SDL_GLContext ctxt, const int* data, const int count, const TMeshCache<SDL_GLContext, GLuint, MeshCache>::MeshDataType type, const IVMeshData::Usage usage);
-            GLuint upload_data(SDL_GLContext ctxt, const float* data, const int count, const TMeshCache<SDL_GLContext, GLuint, MeshCache>::MeshDataType type, const IVMeshData::Usage usage, GLuint old_data);
-            GLuint upload_data(SDL_GLContext ctxt, const int* data, const int count, const TMeshCache<SDL_GLContext, GLuint, MeshCache>::MeshDataType type, const IVMeshData::Usage usage, GLuint old_data);
+            GLuint upload_data(SDL_GLContext ctxt, const float* data, const int count, const TMeshCache<SDL_GLContext, GLuint, MeshCache>::MeshDataType type, const IVMeshData::Usage usage, bool* out_success);
+            GLuint upload_data(SDL_GLContext ctxt, const int* data, const int count, const TMeshCache<SDL_GLContext, GLuint, MeshCache>::MeshDataType type, const IVMeshData::Usage usage, bool* out_success);
+            GLuint upload_data(SDL_GLContext ctxt, const float* data, const int count, const TMeshCache<SDL_GLContext, GLuint, MeshCache>::MeshDataType type, const IVMeshData::Usage usage, GLuint old_data, bool* out_success);
+            GLuint upload_data(SDL_GLContext ctxt, const int* data, const int count, const TMeshCache<SDL_GLContext, GLuint, MeshCache>::MeshDataType type, const IVMeshData::Usage usage, GLuint old_data, bool* out_success);
 
             GLuint destroy_data(SDL_GLContext ctxt, GLuint old_data);
         };
