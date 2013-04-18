@@ -184,3 +184,5 @@ IVImage::RequestStatus request_image_load(IVImage* vimg, const SDL_Rect req_rect
     
     return result;
 };
+
+SimKit::ImageCache SimKit::ImageCache::sys_imgcache;
