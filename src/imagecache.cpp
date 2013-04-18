@@ -1,8 +1,5 @@
 #include <simkit.h>
 
-SimKit::ImageCache::
-SimKit::BitmapVImage::
-
 SimKit::ImageCache::ImageCache() {};
 SimKit::ImageCache::~ImageCache() {};
 
