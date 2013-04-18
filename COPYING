@@ -78,6 +78,12 @@ non-inclusive list of platforms known *not* to comply with this requirement:
    - Nintendo eShop
    - PlayStation Store
    - Windows Store
+ * App stores on hardware based on open platforms, but locked to prevent user
+   installation of unauthorized applications
+   - Any NOOK-related application stores
+    (This is, assuming, that NOOK products still disallow users from installing
+     unauthorized code. Last I checked, my friend's NOOK didn't, and you had to
+     do an annoying downgrade and rootkit procedure to allow development.)
 
 Please note, however, that many of these platforms listed also have EULAs
 prohibiting compliance with the (L)GPL's prohibition on additional terms of use.
