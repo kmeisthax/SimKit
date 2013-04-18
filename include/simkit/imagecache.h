@@ -13,7 +13,7 @@ namespace SimKit {
     
     /* Stores concrete surfaces derived from VImage sources.
      */
-    class SIMKIT_API ImageCache {
+    class SIMKIT_API ImageCache : public virtual MDeleteHook::IHandler, public virtual SimKit::IVImage::IRequest::IListener {
     private:
         ImageCache();
         static ImageCache sys_imgcache;
@@ -27,19 +27,6 @@ namespace SimKit {
         
         std::map<IVImage*, CacheData> vimage_cache;
         
-        class SIMKIT_API CacheCleanup : public virtual MDeleteHook::IHandler {
-            CacheCleanup();
-            void on_delete(MDeleteHook* killed);
-        };
-        
-        static CacheCleanup cache_cleanup;
-        
-        class SIMKIT_API ImageRequestListener : public virtual SimKit::IVImage::IRequest::IListener {
-            ImageRequestListener();
-            void on_request_progress(IVImage* img, IVImage::IRequest* request, const IVImage::IRequest::RequestStatus update);
-        };
-        
-        static ImageRequestListener irl;
     public:
         virtual ~ImageCache();
         
@@ -84,6 +71,11 @@ namespace SimKit {
          */
         void invalidate_image(IVImage* img);
         void invalidate_renderer(SDL_Renderer* render);
+
+        /* MDeleteHook::IHandler impl */
+        void on_delete(MDeleteHook* killed);
+        /* IVImage::IRequest::IListener impl */
+        void on_request_progress(IVImage* img, IVImage::IRequest* request, const IVImage::IRequest::RequestStatus update);
     };
 }
 

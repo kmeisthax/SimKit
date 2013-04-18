@@ -23,12 +23,9 @@ SimKit::IVImage* SimKit::ImageCache::add_image_to_cache(SimKit::ILoader& load, s
     }
 };
 
-SimKit::ImageCache::CacheCleanup::CacheCleanup() {};
-    
-void SimKit::ImageCache::CacheCleanup::on_delete(SimKit::MDeleteHook* killed) {
-    SimKit::ImageCache* ic = SimKit::ImageCache::get_image_cache();
+void SimKit::ImageCache::on_delete(SimKit::MDeleteHook* killed) {
     IVImage* img = dynamic_cast<IVImage*>(killed);
-    SimKit::ImageCache::CacheData &cdata = ic->vimage_cache[img];
+    SimKit::ImageCache::CacheData &cdata = this->vimage_cache[img];
     if (cdata.surface_image) SDL_FreeSurface(cdata.surface_image);
     if (cdata.texture_image) SDL_DestroyTexture(cdata.texture_image);
     if (cdata.loaded_image) delete cdata.loaded_image;
@@ -37,13 +34,13 @@ void SimKit::ImageCache::CacheCleanup::on_delete(SimKit::MDeleteHook* killed) {
 };
 
 void SimKit::ImageCache::add_image_to_cache(SimKit::IVImage* img) {
-    img.register_delete_handler(&this->cache_cleanup);
+    img.register_delete_handler(this);
 
     SimKit::ImageCache::CacheData chdat = {img, NULL, NULL, NULL};
     this->vimage_cache.at(img) = chdat;
 };
 
-void SimKit::ImageCache::ImageRequestListener::on_request_progress(SimKit::IVImage* img, SimKit::IVImage::IRequest* request, const SimKit::IVImage::IRequest::RequestStatus update) {
+void SimKit::ImageCache::on_request_progress(SimKit::IVImage* img, SimKit::IVImage::IRequest* request, const SimKit::IVImage::IRequest::RequestStatus update) {
     switch (update) {
         case SimKit::IVImage::IRequest::REQUEST_INVALID:
         {
@@ -61,7 +58,7 @@ void SimKit::ImageCache::ImageRequestListener::on_request_progress(SimKit::IVIma
             break;
         case SimKit::IVImage::IRequest::REQUEST_COMPLETED:
         {
-            SimKit::ImageCache::CacheData &cdata = SimKit::ImageCache::get_image_cache()->vimage_cache[vimg];
+            SimKit::ImageCache::CacheData &cdata = this->vimage_cache[vimg];
             cdata->get_request_result(&cdata.surface_image, NULL, NULL);
         }
             break;
@@ -116,7 +113,7 @@ IVImage::RequestStatus request_image_load(IVImage* vimg, const SDL_Rect req_rect
         cdata.loaded_image = NULL;
     };
     
-    cdata.loaded_image = cdata.virtual_image->request_image_load(req_rect, req_dpi, &this->irl);
+    cdata.loaded_image = cdata.virtual_image->request_image_load(req_rect, req_dpi, this);
     
     IVImage::RequestStatus result = cdata.loaded_image->check_request_status();
     
@@ -180,7 +177,7 @@ IVImage::RequestStatus request_image_load(IVImage* vimg, const SDL_Rect req_rect
         cdata.loaded_image = NULL;
     };
     
-    cdata.loaded_image = cdata.virtual_image->request_image_load(req_rect, req_dpi, &this->irl);
+    cdata.loaded_image = cdata.virtual_image->request_image_load(req_rect, req_dpi, this);
     
     IVImage::RequestStatus result = cdata.loaded_image->check_request_status();
     
