@@ -151,3 +151,5 @@ void SimKit::OpenGL::MeshCache::destroy_data(SDL_GLContext ctxt, GLuint old_data
     
     glDeleteBuffers(1, &old_data);
 };
+
+SimKit::OpenGL::MeshCache SimKit::OpenGL::MeshCache::sys_meshcache;

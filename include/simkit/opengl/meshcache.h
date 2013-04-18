@@ -9,8 +9,9 @@
 namespace SimKit {
     namespace OpenGL {
         class SIMKIT_API MeshCache : TMeshCache<SDL_GLContext, GLuint, MeshCache> {
-        public:
+        private:
             MeshCache();
+        public:
             virtual ~MeshCache();
 
             GLuint upload_data(SDL_GLContext ctxt, const float* data, const int count, const TMeshCache<SDL_GLContext, GLuint, MeshCache>::MeshDataType type, const IVMeshData::Usage usage, bool* out_success);
@@ -19,6 +20,8 @@ namespace SimKit {
             GLuint upload_data(SDL_GLContext ctxt, const int* data, const int count, const TMeshCache<SDL_GLContext, GLuint, MeshCache>::MeshDataType type, const IVMeshData::Usage usage, GLuint old_data, bool* out_success);
 
             void destroy_data(SDL_GLContext ctxt, GLuint old_data);
+
+            static MeshCache sys_meshcache;
         };
     };
 };
