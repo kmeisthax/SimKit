@@ -14,6 +14,8 @@ namespace SimKit {
          */
         class SIMKIT_API DeferredRenderer : public virtual RenderBase {
         private:
+            ILoader* ldr;
+            
             IScene* scene;
             ICamera* view;
 
@@ -30,7 +32,17 @@ namespace SimKit {
         protected:
             virtual int think(int time_differential) = 0;
         public:
-            DeferredRenderer();
+            /* Construct and deconstruct DeferredRenderer.
+             * 
+             * DeferredRenderer requires a loader which has access to the
+             * following GLSL shader resources:
+             * 
+             * opengl/postprocess_vertex.glsl
+             * opengl/deferred_frag.glsl
+             * opengl/gbuffer_vertex.glsl
+             * opengl/gbuffer_frag.glsl
+             */
+            DeferredRenderer(ILoader* ldr);
             virtual ~DeferredRenderer();
             
             virtual void set_render_target(SDL_Window* wnd, SDL_GLContext ctxt) = 0;
