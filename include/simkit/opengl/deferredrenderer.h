@@ -4,6 +4,7 @@
 #include <simkit.h>
 #include <simkit/opengl.h>
 #include <glload/_int_gl_type.h>
+#include <glm/glm.hpp>
 #include <istream>
 
 namespace SimKit {
@@ -26,13 +27,13 @@ namespace SimKit {
             GLuint gbuf_fbo;
             GLuint gbuf_ambient, gbuf_diffuse, gbuf_specular, gbuf_phongparams, gbuf_depth, gbuf_normal;
             
-            void render_node(ISceneNode* node, ICamera* cam);
             GLuint gbuf_vshader, gbuf_fshader;
             GLuint gbuf_program;
             
             GLuint null_vshader, light_fshader;
             GLuint light_program;
             
+            void render_node(ISceneNode* node, const glm::mat4 model, const glm::mat4 view, const glm::mat4 proj);
             void render_pass(ICamera* cam);
             void gbuffer_pass();
             void deferred_pass();
