@@ -20,15 +20,25 @@ namespace SimKit {
             ICamera* view;
 
             SDL_Window* wnd;
+            SDL_Rect viewport;
             SDL_GLContext ctxt;
             
             GLuint gbuf_fbo;
             GLuint gbuf_ambient, gbuf_diffuse, gbuf_specular, gbuf_phongparams, gbuf_depth, gbuf_normal;
             
             void render_node(ISceneNode* node, ICamera* cam);
+            GLuint gbuf_vshader, gbuf_fshader;
+            GLuint gbuf_program;
+            
+            GLuint null_vshader, light_fshader;
+            GLuint light_program;
+            
             void render_pass(ICamera* cam);
             void gbuffer_pass();
             void deferred_pass();
+
+            void setup_context();
+            void teardown_context();
         protected:
             virtual int think(int time_differential) = 0;
         public:
@@ -45,8 +55,8 @@ namespace SimKit {
             DeferredRenderer(ILoader* ldr);
             virtual ~DeferredRenderer();
             
-            virtual void set_render_target(SDL_Window* wnd, SDL_GLContext ctxt) = 0;
-            virtual void set_render_target(SDL_Window* wnd, SDL_GLContext ctxt, const SDL_Rect viewport) = 0;
+            virtual void set_render_target(SDL_Window* wnd) = 0;
+            virtual void set_render_target(SDL_Window* wnd, const SDL_Rect viewport) = 0;
             
             virtual void set_scene_root(IScene* scene, ICamera* cam) = 0;
         };
