@@ -15,14 +15,37 @@ namespace SimKit {
      */
     class SIMKIT_API Material : public virtual MRefCount {
     public:
+        /* Defines what kinds of parameters participate in defining the material.
+         * 
+         * Note that, despite being a bitmask, not all combinations of mappings
+         * are valid. Specifically:
+         * 
+         *     If no mappings are set, the material parameter is IGNORED.
+         *     What that means depends on the parameter being defined:
+         *     Some parameters are required to specify a complete material and
+         *     not mapping them properly may result in your object not being
+         *     rendered. Others will be replaced with a default value which
+         *     implies that rendering continues without that feature in place.
+         *     
+         *     You cannot combine more than one per-vertex mapping.
+         *     That means that PT_IMAGE | PT_ATTRIB is fine, but you cannot use
+         *     PT_NORMAL | PT_ATTRIB and expect a valid mapping. Invalid mapping
+         *     will cause the resulting parameter to be considered as if it had
+         *     no material mappings at all.
+         * 
+         * The meaning of "combine" varies based on the parameter and it's
+         * interpretation. The default interpretation is that the resulting
+         * values from each mapping are multiplied componentwise to produce the
+         * final parameter value.
+         */
         enum ParamType {
-            PT_UNMAPPED,        //Parameter is completely unmapped.
-                                //i.e. forget about this rendering feature entirely
-                                
-            PT_CONSTANT,        //Parameter is constant throughout the model
-            PT_IMAGE,           //Parameter varies according to a UV-mapped img
-            PT_ATTRIB,          //Parameter varies using vertex attribute data
-            PT_NORMAL,          //Parameter varies using vertex normal data
+            PT_UNMAPPED = 0,        //Parameter is completely unmapped.
+                                    //i.e. forget about this rendering feature entirely
+                                    
+            PT_CONSTANT = 1 << 0,   //Parameter is constant throughout the model
+            PT_IMAGE    = 1 << 1,   //Parameter varies according to a UV-mapped img
+            PT_ATTRIB   = 1 << 2,   //Parameter varies using vertex attribute data
+            PT_NORMAL   = 1 << 3,   //Parameter varies using vertex normal data
         };
         
         /* Some parameters can take vectors of up to four components.
@@ -42,6 +65,8 @@ namespace SimKit {
          * component that takes R.
          * 
          * A precomposed identity swizzle exists at SWIZZLE_RGBA.
+         * 
+         * Swizzling is currently only supported for the PT_IMAGE mapping.
          */
         enum ParamSwizzle {
             CMP_R = 0x00,
@@ -72,34 +97,51 @@ namespace SimKit {
             Parameter param;
             ParamType mapping;
             
-            //Useful for constant parameters only
+            /* PT_CONSTANT */
             float constant[4];
+
+            /* PT_NORMAL (empty) */
             
-            //Useful for varying parameters only
-            ParamSwizzle swiz;       //Rearranges parameter vectors (const, attrib, uvmaps only)
-            std::string attrib_name; //can also be used to identify a UV map
-            int attrib_id;           //same as above, but direct ID number
-                                     //if name is empty string, id is used instead
-            Ref<IVImage> vtex;      //Image to use as texture to look up
+            /* PT_ATTRIB */
+            std::string attrib_name;
+            int attrib_id;
+            
+            /* PT_IMAGE */
+            ParamSwizzle swiz;
+            std::string uv_name;
+            int uv_id;
+            Ref<IVImage> vtex;
         };
         
         Material();
         ~Material();
         
-        void map_material_parameter(const Parmeter param, const float constant[4]);
-        void map_material_parameter_as_normal(const Parmeter param);
-        void map_material_parameter(const Parmeter param, const std::string attrib_name, const ParamSwizzle swiz);
-        void map_material_parameter(const Parmeter param, const std::string uvmap_name, const ParamSwizzle swiz, IVImage* vtex);
-        void map_material_parameter(const Parmeter param, const int attrib_id, const ParamSwizzle swiz);
-        void map_material_parameter(const Parmeter param, const int uvmap_id, const ParamSwizzle swiz, IVImage* vtex);
+        /* Add an additional parameter mapping to the param specification.
+         */
+        void map_material_constant(const Parmeter param, const float constant[4]);
+        void map_material_normal(const Parmeter param);
+        void map_material_attrib(const Parmeter param, const std::string attrib_name);
+        void map_material_attrib(const Parmeter param, const int attrib_id);
+        void map_material_image(const Parmeter param, const std::string uvmap_name, const ParamSwizzle swiz, IVImage* vtex);
+        void map_material_image(const Parmeter param, const int uvmap_id, const ParamSwizzle swiz, IVImage* vtex);
         
-        ParamType get_material_parameter_mapping(const Parameter param);
-        void get_material_parameter(const Parameter param, float out_constant[4]);
-        void get_material_parameter(const Parameter param, std::string &out_attrib_name, int *out_attrib_id, ParamSwizzle *out_swiz);
-        void get_material_parameter(const Parameter param, std::string &out_uvmap_name, int *out_uvmap_id, ParamSwizzle *out_swiz, IVImage** out_vtex);
+        /* Find what material mappings are enabled for a particular parameter,
+         * and retrieve their settings.
+         */
+        ParamType get_material_mappings(const Parameter param);
+        void get_material_constant(const Parameter param, float out_constant[4], bool* out_mapped);
+        void get_material_attrib(const Parameter param, std::string &out_attrib_name, int *out_attrib_id, bool* out_mapped);
+        void get_material_image(const Parameter param, std::string &out_uvmap_name, int *out_uvmap_id, ParamSwizzle *out_swiz, IVImage** out_vtex, bool* out_mapped);
         
+        /* Unmap a previously mapped material parameter.
+         * 
+         * The optional unmapped parameter determines what mappings to destroy.
+         * If not provided, all data relating to the parameter will be destroyed.
+         */
         void unmap_material_parameter(const Parameter param);
+        void unmap_material_parameter(const Parameter param, const ParamType unmapped);
     private:
+        void ensure_material_parameter_exists(const Parameter param);
         std::map<Parameter, ParamSpec> m_params;
     }
 };
