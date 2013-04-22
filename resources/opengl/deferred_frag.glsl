@@ -13,7 +13,10 @@ uniform sampler2D lighting_data; //n-by-at-least-3 texture. Vertical texels in o
                                  //Storage format should be GL_RGBA32F.
                                  //Should not have mipmapping or aniso enabled.
 
+uniform mat4 gbuf_projection;    //view to clip space matrix
 uniform mat4 gbuf_unprojection;  //clip to view space matrix
+uniform vec4 gbuf_viewport;      //xy: xy of viewport; zw: width and height of viewport
+uniform vec2 gbuf_depthrange;    //xy: near and far depth range
 
 void main() {
     vec3 ambient_frag = texture(gbuf_ambient_color, gl_FragCoord.xy);
@@ -22,8 +25,14 @@ void main() {
     vec3 normal_frag = texture(gbuf_normal, gl_FragCoord.xy);
     float shiny = texture(gbuf_phongparams, gl_FragCoord.xy).w;
     float depth = texture(gbuf_depth, gl_FragCoord.xy);
+
+    vec3 windowspace_coord = vec3(gl_FragCoord.xy, depth);
+    vec3 devicespace_coord = vec3(((2.0 * windowspace_coord.xy) - (2.0 * gbuf_viewport.xy)) / (gbuf_viewport.zw) - 1,
+                                   (2.0 * windowspace_coord.x - gbuf_depthrange.x - gbuf_depthrange.y) / (gbuf_depthrange.y - gbuf_depthrange.x));
+    vec4 clipspace_coord = vec4(devicespace_coord, gbuf_projection[3][3] / (devicespace_coord.z - (gbuf_projection[4][3] / gbuf_projection[3][4])));
+    clipspace_coord.xyz = clipspace_coord.xyz * clipspace_coord.w;
+    vec4 viewspace_coord = gbuf_unprojection * clipspace_coord;
     
-    vec4 viewspace_coord = gbuf_unprojection * vec4(gl_FragCoord.xy, depth, 1.0);
     vec3 final_frag = ambient_frag;
     
     ivec2 light_data_spec = textureSize(lighting_data, 0);
