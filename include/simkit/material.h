@@ -88,9 +88,23 @@ namespace SimKit {
          * the capabilities of the hardware, and if the user has enabled them.
          */
         enum Parameter {
-            PARAM_DIFFUSE,  //The color of the material under grazing or .
-            PARAM_SPECULAR, //The color of the material under directly incident light
-            PARAM_NORMAL,   //The vector perpendicular to the surface of the object
+        /* Generic Phong Lighting Model. (All mandatory) */
+            PARAM_AMBIENT,      //%,color of light reflected absent of any light (used to fake global illumination)
+                                //RGB parameter, normalized to range 0 to 1.
+            PARAM_DIFFUSE,      //%,color of light reflected when surface is seen from any particular angle
+                                //RGB parameter, normalized to range 0 to 1.
+            PARAM_SPECULAR,     //%,color of light reflected when surface is seen in perfect reflections
+                                //RGB parameter, normalized to range 0 to 1.
+            PARAM_NORMAL,       //The vector perpendicular to the surface of the object
+                                //XYZ parameter, normalized to range -1 to 1.
+            PARAM_SHININESS,    //Phong shininess parameter. Controls size of specular highlights.
+                                //Float parameter, range from 0 to 1.
+            
+        /* Toon Lighting Model (Optional) */
+            PARAM_TOON_DIFFUSE, //Reciprocal of number of distinct diffuse shading layers (i.e. quantization step)
+                                //Float parameter, range from 0 to 1. 0 is unmapped value.
+            PARAM_TOON_SPECULAR,//Reciprocal of number of distinct specular shading layers (i.e. quantization step)
+                                //Float parameter, range from 0 to 1. 0 is unmapped value.
         };
         
         struct ParamSpec {
