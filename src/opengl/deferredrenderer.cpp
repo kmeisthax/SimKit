@@ -68,7 +68,7 @@ void SimKit::OpenGL::DeferredRenderer::setup_context() {
     
     glGenTextures(1, &this->gbuf_depth);
     glBindTexture(GL_TEXTURE_2D, this->gbuf_depth);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT​32F, this->viewport.w, this->viewport.h, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, this->viewport.w, this->viewport.h, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL);
     glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->gbuf_normal, 0);
 };
 
