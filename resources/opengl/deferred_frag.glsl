@@ -13,6 +13,8 @@ uniform sampler2D lighting_data; //n-by-at-least-3 texture. Vertical texels in o
                                  //Storage format should be GL_RGBA32F.
                                  //Should not have mipmapping or aniso enabled.
 
+uniform vec3 light_ambient;      //Ambient lighting term for space
+
 uniform mat4 gbuf_projection;    //view to clip space matrix
 uniform mat4 gbuf_unprojection;  //clip to view space matrix
 uniform vec4 gbuf_viewport;      //xy: xy of viewport; zw: width and height of viewport
@@ -33,7 +35,7 @@ void main() {
     clipspace_coord.xyz = clipspace_coord.xyz * clipspace_coord.w;
     vec4 viewspace_coord = gbuf_unprojection * clipspace_coord;
     
-    vec3 final_frag = ambient_frag;
+    vec3 final_frag = ambient_frag * light_ambient;
     
     ivec2 light_data_spec = textureSize(lighting_data, 0);
     for (int i = 0; i < light_data_spec.x; i++) { //Basic (shadowless) phong mapping
