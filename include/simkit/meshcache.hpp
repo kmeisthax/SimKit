@@ -181,7 +181,7 @@ namespace SimKit {
 
         /* *** VERTEX DATA *** */
         
-        IVMeshData::RequestStatus request_mesh_verticies(IVMeshData* vmesh, const float desired_quality, float** out_vertex_data, int* out_vertex_count) {
+        IVMeshData::IRequest::RequestStatus request_mesh_verticies(IVMeshData* vmesh, const float desired_quality, float** out_vertex_data, int* out_vertex_count) {
             int reload = 0;
             
             while (reload < 2) {
@@ -207,7 +207,7 @@ namespace SimKit {
             SimKit::EmergencyError(err);
         };
         
-        IVMeshData::RequestStatus request_mesh_verticies(IVMeshData* vmesh, const float desired_quality, gpu_context_type ctxt, gpu_data_type* out_data) {
+        IVMeshData::IRequest::RequestStatus request_mesh_verticies(IVMeshData* vmesh, const float desired_quality, gpu_context_type ctxt, gpu_data_type* out_data) {
             int reload = 0;
             
             while (reload < 2) {
@@ -248,7 +248,7 @@ namespace SimKit {
         
         /* *** INDEX DATA *** */
         
-        IVMeshData::RequestStatus request_mesh_indicies(IVMeshData* vmesh, const float desired_quality, int** out_index_data, int* out_index_count) {
+        IVMeshData::IRequest::RequestStatus request_mesh_indicies(IVMeshData* vmesh, const float desired_quality, int** out_index_data, int* out_index_count) {
             int reload = 0;
             
             while (reload < 2) {
@@ -274,7 +274,7 @@ namespace SimKit {
             SimKit::EmergencyError(err);
         };
         
-        IVMeshData::RequestStatus request_mesh_indicies(IVMeshData* vmesh, const float desired_quality, gpu_context_type ctxt, gpu_data_type* out_data) {
+        IVMeshData::IRequest::RequestStatus request_mesh_indicies(IVMeshData* vmesh, const float desired_quality, gpu_context_type ctxt, gpu_data_type* out_data) {
             int reload = 0;
             
             while (reload < 2) {
@@ -315,7 +315,7 @@ namespace SimKit {
 
         /* *** NORMAL DATA *** */
         
-        IVMeshData::RequestStatus request_mesh_normals(IVMeshData* vmesh, const float desired_quality, float** out_normal_data, int* out_normal_count, bool* out_has_normals) {
+        IVMeshData::IRequest::RequestStatus request_mesh_normals(IVMeshData* vmesh, const float desired_quality, float** out_normal_data, int* out_normal_count, bool* out_has_normals) {
             int reload = 0;
             
             while (reload < 2) {
@@ -347,7 +347,7 @@ namespace SimKit {
             SimKit::EmergencyError(err);
         };
         
-        IVMeshData::RequestStatus request_mesh_normals(IVMeshData* vmesh, const float desired_quality, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_normals) {
+        IVMeshData::IRequest::RequestStatus request_mesh_normals(IVMeshData* vmesh, const float desired_quality, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_normals) {
             int reload = 0;
             
             while (reload < 2) {
@@ -393,7 +393,7 @@ namespace SimKit {
 
         /* *** GENERIC VERTEX ATTRIBUTE DATA *** */
 
-        IVMeshData::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const std::string attrib_name, float** out_attrib_data, int* out_attrib_count, bool* out_has_attrib) {
+        IVMeshData::IRequest::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const std::string attrib_name, float** out_attrib_data, int* out_attrib_count, bool* out_has_attrib) {
             this->ensure_request_exists(vmesh, desired_quality);
 
             if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
@@ -410,7 +410,7 @@ namespace SimKit {
             this->request_mesh_attribs(vmesh, desired_quality, attrib_id, out_attrib_data, out_attrib_count, out_has_attrib);
         };
         
-        IVMeshData::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const std::string attrib_name, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib) {
+        IVMeshData::IRequest::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const std::string attrib_name, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib) {
             this->ensure_request_exists(vmesh, desired_quality);
 
             if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
@@ -427,7 +427,7 @@ namespace SimKit {
             this->request_mesh_attribs(vmesh, desired_quality, attrib_id, ctxt, out_data, out_has_attrib);
         };
         
-        IVMeshData::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const int attrib_id, float** out_attrib_data, int* out_attrib_count, bool* out_has_attrib) {
+        IVMeshData::IRequest::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const int attrib_id, float** out_attrib_data, int* out_attrib_count, bool* out_has_attrib) {
             int reload = 0;
             
             while (reload < 2) {
@@ -460,7 +460,7 @@ namespace SimKit {
             SimKit::EmergencyError(err);
         };
         
-        IVMeshData::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const int attrib_id, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib) {
+        IVMeshData::IRequest::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const int attrib_id, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib) {
             int reload = 0;
             
             while (reload < 2) {
@@ -508,7 +508,7 @@ namespace SimKit {
 
         /* *** VERTEX IMAGE COORDINATE UV MAPPING DATA *** */
 
-        IVMeshData::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const std::string uvmap_name, float** out_uvmap_data, int* out_uvmap_count, bool* out_has_attrib) {
+        IVMeshData::IRequest::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const std::string uvmap_name, float** out_uvmap_data, int* out_uvmap_count, bool* out_has_attrib) {
             this->ensure_request_exists(vmesh, desired_quality);
 
             if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
@@ -525,7 +525,7 @@ namespace SimKit {
             this->request_mesh_attribs(vmesh, desired_quality, uvmap_id, out_uvmapb_data, out_uvmap_count, out_has_attrib);
         };
         
-        IVMeshData::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const std::string uvmap_name, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib) {
+        IVMeshData::IRequest::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const std::string uvmap_name, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib) {
             this->ensure_request_exists(vmesh, desired_quality);
 
             if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
@@ -542,7 +542,7 @@ namespace SimKit {
             this->request_mesh_attribs(vmesh, desired_quality, uvmap_id, ctxt, out_data, out_has_attrib);
         };
         
-        IVMeshData::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const int uvmap_id, float** out_uvmap_data, int* out_uvmap_count, bool* out_has_uvmap) {
+        IVMeshData::IRequest::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const int uvmap_id, float** out_uvmap_data, int* out_uvmap_count, bool* out_has_uvmap) {
             int reload = 0;
             
             while (reload < 2) {
@@ -576,7 +576,7 @@ namespace SimKit {
             SimKit::EmergencyError(err);
         };
         
-        IVMeshData::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const int uvmap_id, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_uvmap) {
+        IVMeshData::IRequest::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const int uvmap_id, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_uvmap) {
             int reload = 0;
             
             while (reload < 2) {
