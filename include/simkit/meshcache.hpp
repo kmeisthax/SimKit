@@ -392,6 +392,40 @@ namespace SimKit {
         };
 
         /* *** GENERIC VERTEX ATTRIBUTE DATA *** */
+
+        IVMeshData::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const std::string attrib_name, float** out_attrib_data, int* out_attrib_count, bool* out_has_attrib) {
+            this->ensure_request_exists(vmesh, desired_quality);
+
+            if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
+                return this->cache[vmesh].loaded_mesh->check_request_status();
+            }
+            
+            int attrib_id = this->cache[vmesh].loaded_mesh->get_attrib_id(attrib_name);
+            
+            if (!this->cache[vmesh].loaded_mesh->has_attrib(attrib_id)) {
+                if (out_has_attrib) *out_has_attrib = false;
+                return this->cache[vmesh].loaded_mesh->check_request_status();
+            }
+
+            this->request_mesh_attribs(vmesh, desired_quality, attrib_id, out_attrib_data, out_attrib_count, out_has_attrib);
+        };
+        
+        IVMeshData::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const std::string attrib_name, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib) {
+            this->ensure_request_exists(vmesh, desired_quality);
+
+            if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
+                return this->cache[vmesh].loaded_mesh->check_request_status();
+            }
+            
+            int attrib_id = this->cache[vmesh].loaded_mesh->get_attrib_id(attrib_name);
+            
+            if (!this->cache[vmesh].loaded_mesh->has_attrib(attrib_id)) {
+                if (out_has_attrib) *out_has_attrib = false;
+                return this->cache[vmesh].loaded_mesh->check_request_status();
+            }
+
+            this->request_mesh_attribs(vmesh, desired_quality, attrib_id, ctxt, out_data, out_has_attrib);
+        };
         
         IVMeshData::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const int attrib_id, float** out_attrib_data, int* out_attrib_count, bool* out_has_attrib) {
             int reload = 0;
@@ -473,6 +507,40 @@ namespace SimKit {
         };
 
         /* *** VERTEX IMAGE COORDINATE UV MAPPING DATA *** */
+
+        IVMeshData::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const std::string uvmap_name, float** out_uvmap_data, int* out_uvmap_count, bool* out_has_attrib) {
+            this->ensure_request_exists(vmesh, desired_quality);
+
+            if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
+                return this->cache[vmesh].loaded_mesh->check_request_status();
+            }
+            
+            int uvmap_id = this->cache[vmesh].loaded_mesh->get_uvmap_id(uvmap_name);
+            
+            if (!this->cache[vmesh].loaded_mesh->has_attrib(uvmap_id)) {
+                if (out_has_attrib) *out_has_attrib = false;
+                return this->cache[vmesh].loaded_mesh->check_request_status();
+            }
+
+            this->request_mesh_attribs(vmesh, desired_quality, uvmap_id, out_uvmapb_data, out_uvmap_count, out_has_attrib);
+        };
+        
+        IVMeshData::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const std::string uvmap_name, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib) {
+            this->ensure_request_exists(vmesh, desired_quality);
+
+            if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
+                return this->cache[vmesh].loaded_mesh->check_request_status();
+            }
+            
+            int uvmap_id = this->cache[vmesh].loaded_mesh->get_uvmap_id(uvmap_name);
+            
+            if (!this->cache[vmesh].loaded_mesh->has_attrib(uvmap_id)) {
+                if (out_has_attrib) *out_has_attrib = false;
+                return this->cache[vmesh].loaded_mesh->check_request_status();
+            }
+
+            this->request_mesh_attribs(vmesh, desired_quality, uvmap_id, ctxt, out_data, out_has_attrib);
+        };
         
         IVMeshData::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const int uvmap_id, float** out_uvmap_data, int* out_uvmap_count, bool* out_has_uvmap) {
             int reload = 0;
