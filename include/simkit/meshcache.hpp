@@ -89,7 +89,7 @@ namespace SimKit {
             //Assumes request exists (do not call before ensure_request_exists)
             if (this->cache[vmesh].hw.count(ctxt) == 0) {
                 std::pair<gpu_context_type, HWCacheData> hcd;
-
+                
                 hcd.first = ctxt;
                 hcd.second.context = ctxt;
                 hcd.second.vertex_isnull = true;
@@ -99,7 +99,7 @@ namespace SimKit {
                 this->cache[vmesh].hw.insert(hcd);
             }
         };
-
+        
         void ensure_attribute_loaded(IVMeshData* vmesh, const int attrib_id) {
             //Assumes request exists, has completed, and attribute exists
             if (this->cache[vmesh].attrib_data.count(attrib_id) == 0) {
@@ -123,14 +123,14 @@ namespace SimKit {
         TMeshCache() {};
     public:
         virtual ~TMeshCache() {
-            while (this->cache.size > 0) {
-                invalidate_mesh(this->cache->begin()->first);
+            while (this->cache.size() > 0) {
+                invalidate_mesh(this->cache.begin()->first);
             }
         };
         
         virtual void on_delete(MDeleteHook* killed) {
             IVMeshData* deadman = dynamic_cast<IVMeshData*>(killed);
-
+            
             if (deadman && this->cache.count(deadman) > 0) {
                 this->invalidate_mesh(deadman);
             }
@@ -168,7 +168,7 @@ namespace SimKit {
             mesh->register_delete_handler(this);
             
             std::pair<IVMeshData*, CacheData> cd;
-
+            
             cd.first = mesh;
             cd.second.virtual_mesh = mesh;
             cd.second.loaded_mesh = NULL;
@@ -178,7 +178,7 @@ namespace SimKit {
             
             this->cache.insert(cd);
         };
-
+        
         /* *** VERTEX DATA *** */
         
         IVMeshData::IRequest::RequestStatus request_mesh_verticies(IVMeshData* vmesh, const float desired_quality, float** out_vertex_data, int* out_vertex_count) {
@@ -229,7 +229,7 @@ namespace SimKit {
                 if (this->cache[vmesh].vertex_data) {
                     bool it_worked = false;
                     this->cache[vmesh].hw[ctxt].vertex_data = gpu_traits::upload_data(ctxt, this->cache[vmesh].vertex_data, this->cache[vmesh].vertex_count, VERTEX_DATA, vmesh->get_usage_frequency(), &it_worked);
-
+                    
                     if (it_worked) {
                         this->cache[vmesh].hw[ctxt].vertex_isnull = false;
                         
@@ -296,7 +296,7 @@ namespace SimKit {
                 if (this->cache[vmesh].index_data) {
                     bool it_worked = false;
                     this->cache[vmesh].hw[ctxt].index_data = gpu_traits::upload_data(ctxt, this->cache[vmesh].index_data, this->cache[vmesh].index_count, INDEX_DATA, vmesh->get_usage_frequency(), &it_worked);
-
+                    
                     if (it_worked) {
                         this->cache[vmesh].hw[ctxt].index_isnull = false;
                         
@@ -312,7 +312,7 @@ namespace SimKit {
             err += request->get_loading_error();
             SimKit::EmergencyError(err);
         };
-
+        
         /* *** NORMAL DATA *** */
         
         IVMeshData::IRequest::RequestStatus request_mesh_normals(IVMeshData* vmesh, const float desired_quality, float** out_normal_data, int* out_normal_count, bool* out_has_normals) {
@@ -326,7 +326,7 @@ namespace SimKit {
                 if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
-
+                
                 if (!this->cache[vmesh].loaded_mesh->has_normals()) {
                     if (out_has_normals) *out_has_normals = this->cache[vmesh].loaded_mesh->has_normals();
                     return this->cache[vmesh].loaded_mesh->check_request_status();
@@ -342,7 +342,7 @@ namespace SimKit {
                 this->invalidate_mesh(vmesh);
             }
             
-            std::string err = "Mesh source provided no vertex data after explicit reload and REQUEST_COMPLETE status.\n Reason: ";
+            std::string err = "Mesh source provided no normal data after explicit reload and REQUEST_COMPLETE status.\n Reason: ";
             err += request->get_loading_error();
             SimKit::EmergencyError(err);
         };
@@ -374,7 +374,7 @@ namespace SimKit {
                 if (this->cache[vmesh].normal_data) {
                     bool it_worked = false;
                     this->cache[vmesh].hw[ctxt].normal_data = gpu_traits::upload_data(ctxt, this->cache[vmesh].normal_data, this->cache[vmesh].normal_count, NORMAL_DATA, vmesh->get_usage_frequency(), &it_worked);
-
+                    
                     if (it_worked) {
                         this->cache[vmesh].hw[ctxt].normal_isnull = false;
                         
@@ -386,16 +386,16 @@ namespace SimKit {
                 this->invalidate_mesh(vmesh);
             }
             
-            std::string err = "Mesh source provided no vertex data after explicit reload and REQUEST_COMPLETE status.\n Reason: ";
+            std::string err = "Mesh source provided no normal data after explicit reload and REQUEST_COMPLETE status.\n Reason: ";
             err += request->get_loading_error();
             SimKit::EmergencyError(err);
         };
-
+        
         /* *** GENERIC VERTEX ATTRIBUTE DATA *** */
-
+        
         IVMeshData::IRequest::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const std::string attrib_name, float** out_attrib_data, int* out_attrib_count, bool* out_has_attrib) {
             this->ensure_request_exists(vmesh, desired_quality);
-
+            
             if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
                 return this->cache[vmesh].loaded_mesh->check_request_status();
             }
@@ -406,13 +406,13 @@ namespace SimKit {
                 if (out_has_attrib) *out_has_attrib = false;
                 return this->cache[vmesh].loaded_mesh->check_request_status();
             }
-
+            
             this->request_mesh_attribs(vmesh, desired_quality, attrib_id, out_attrib_data, out_attrib_count, out_has_attrib);
         };
         
         IVMeshData::IRequest::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const std::string attrib_name, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib) {
             this->ensure_request_exists(vmesh, desired_quality);
-
+            
             if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
                 return this->cache[vmesh].loaded_mesh->check_request_status();
             }
@@ -423,7 +423,7 @@ namespace SimKit {
                 if (out_has_attrib) *out_has_attrib = false;
                 return this->cache[vmesh].loaded_mesh->check_request_status();
             }
-
+            
             this->request_mesh_attribs(vmesh, desired_quality, attrib_id, ctxt, out_data, out_has_attrib);
         };
         
@@ -438,12 +438,12 @@ namespace SimKit {
                 if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
-
+                
                 if (!this->cache[vmesh].loaded_mesh->has_attrib(attrib_id)) {
                     if (out_has_attrib) *out_has_attrib = this->cache[vmesh].loaded_mesh->has_attrib(attrib_id);
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
-
+                
                 this->ensure_attribute_loaded(vmesh, attrib_id);
                 
                 if (this->cache[vmesh].attrib_data[attrib_id].data) {
@@ -505,12 +505,12 @@ namespace SimKit {
             err += request->get_loading_error();
             SimKit::EmergencyError(err);
         };
-
+        
         /* *** VERTEX IMAGE COORDINATE UV MAPPING DATA *** */
-
+        
         IVMeshData::IRequest::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const std::string uvmap_name, float** out_uvmap_data, int* out_uvmap_count, bool* out_has_attrib) {
             this->ensure_request_exists(vmesh, desired_quality);
-
+            
             if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
                 return this->cache[vmesh].loaded_mesh->check_request_status();
             }
@@ -521,13 +521,13 @@ namespace SimKit {
                 if (out_has_attrib) *out_has_attrib = false;
                 return this->cache[vmesh].loaded_mesh->check_request_status();
             }
-
+            
             this->request_mesh_attribs(vmesh, desired_quality, uvmap_id, out_uvmapb_data, out_uvmap_count, out_has_attrib);
         };
         
         IVMeshData::IRequest::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const std::string uvmap_name, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib) {
             this->ensure_request_exists(vmesh, desired_quality);
-
+            
             if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
                 return this->cache[vmesh].loaded_mesh->check_request_status();
             }
@@ -538,7 +538,7 @@ namespace SimKit {
                 if (out_has_attrib) *out_has_attrib = false;
                 return this->cache[vmesh].loaded_mesh->check_request_status();
             }
-
+            
             this->request_mesh_attribs(vmesh, desired_quality, uvmap_id, ctxt, out_data, out_has_attrib);
         };
         
@@ -553,12 +553,12 @@ namespace SimKit {
                 if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
-
+                
                 if (!this->cache[vmesh].loaded_mesh->has_uvmap(uvmap_id)) {
                     if (out_has_uvmap) *out_has_uvmap = this->cache[vmesh].loaded_mesh->has_uvmap(uvmap_id);
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
-
+                
                 this->ensure_uvmap_loaded(vmesh, uvmap_id);
                 
                 if (this->cache[vmesh].uvmap_data[uvmap_id].data) {
@@ -605,7 +605,7 @@ namespace SimKit {
                 if (this->cache[vmesh].uvmap_data[uvmap_id].data) {
                     bool it_worked = false;
                     this->cache[vmesh].hw[ctxt].uvmap_data[uvmap_id] = gpu_traits::upload_data(ctxt, this->cache[vmesh].uvmap_data[uvmap_id].data, this->cache[vmesh].uvmap_data[uvmap_id].count, UVMAP_DATA, vmesh->get_usage_frequency(), &it_worked);
-
+                    
                     if (it_worked) {
                         if (out_data) *out_data = this->cache[vmesh].hw[ctxt].uvmap_data[uvmap_id];
                         return this->cache[vmesh].loaded_mesh->check_request_status();
@@ -653,8 +653,10 @@ namespace SimKit {
             
             this->cache.erase(mesh);
         };
-
-        void invalidate_context
+        
+        void invalidate_context(gpu_context_type ctxt) {
+            //TODO: Write invalidate_context
+        }
     }
 }
 

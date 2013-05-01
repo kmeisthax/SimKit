@@ -16,7 +16,7 @@ namespace SimKit {
     class SIMKIT_API ImageCache : public virtual MDeleteHook::IHandler, public virtual SimKit::IVImage::IRequest::IListener {
     private:
         ImageCache();
-
+        
         struct CacheData {
             IVImage* virtual_image;
             IVImage::IRequest* loaded_image;
