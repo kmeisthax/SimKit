@@ -52,33 +52,14 @@ namespace SimKit {
          * The swizzle configures how an incoming vector of four components RGBA
          * is mapped to the components taken by the material, IJKL.
          * 
-         * Here's an example of how to construct a swizzle:
-         * 
-         *      ParamSwizzle swiz = CMP_G << TO_K | CMP_A << TO_J;
-         * 
-         * This will mean that the material will take components IJKL to be
-         * incoming components RAGR.
-         * 
-         * The way it works is that the swizzle is encoded as an array of 2 bit
-         * fields. By shifting component numbers by output indicies, you create
-         * the swizzle. This also means that you don't have to specify any
-         * component that takes R.
-         * 
-         * A precomposed identity swizzle exists at SWIZZLE_RGBA.
-         * 
          * Swizzling is currently only supported for the PT_IMAGE mapping.
          */
-        enum ParamSwizzle {
-            CMP_R = 0x00,
-            CMP_G = 0x01,
-            CMP_B = 0x02,
-            CMP_A = 0x03,
-            TO_I = 0x00,
-            TO_J = 0x02,
-            TO_K = 0x04,
-            TO_L = 0x06,
-            
-            SWIZZLE_RGBA = CMP_R << TO_I | CMP_G << TO_J | CMP_B << TO_K | CMP_A << TO_L,
+        enum SwizzleSource {
+            SW_RED, SW_GREEN, SW_BLUE, SW_ALPHA, SW_ALWAYS_ZERO, SW_ALWAYS_ONE
+        };
+        
+        struct ParamSwizzle {
+            SwizzleSource i,j,k,l;
         };
         
         /* Contains a large number of material attributes which this material can specify.
