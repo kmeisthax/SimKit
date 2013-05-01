@@ -39,6 +39,7 @@
 #include "simkit/vresource.hpp"     //Base class
 
 #include "simkit/imagecache.h"      //Virtual textures/images
+#include "simkit/texturecache.hpp"
 #include "simkit/vimage.h"
 #include "simkit/bitmapvimage.h"    //SDL_image loader
 
@@ -47,7 +48,7 @@
 
 /* -- * -- Font rendering -- * -- */
 #include "simkit/fontloader.h"
-#include "simkit/font.h"           
+#include "simkit/font.h"
 #include "simkit/ttffont.h"        //SDL_TTF font loader
 
 /* -- * -- 3D scene structuring -- * -- */
