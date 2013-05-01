@@ -13,7 +13,7 @@ namespace SimKit {
      * It consists of parameters which can be mapped to a per-model constant,
      * a UV-mapped image, or per-vertex attributes.
      */
-    class SIMKIT_API Material : public virtual MRefCount {
+    class SIMKIT_API Material {
     public:
         /* Defines what kinds of parameters participate in defining the material.
          * 
