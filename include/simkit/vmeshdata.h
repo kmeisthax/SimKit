@@ -136,6 +136,11 @@ namespace SimKit {
              * 
              * UVMaps and Attributes may have a name attached to them, which may
              * be more convenient than hard-coded ID numbers.
+             * 
+             * If an attribute or uvmap name does not exist, this function is
+             * oblidged to return an implementation-dependent value which, when
+             * given to the appropriate has_uvmap or has_attrib function, will
+             * return false.
              */
             virtual int get_uvmap_id(const std::string name) = 0;
             virtual int get_attrib_id(const std::string name) = 0;
