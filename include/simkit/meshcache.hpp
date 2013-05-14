@@ -250,7 +250,7 @@ namespace SimKit {
         
         /* *** INDEX DATA *** */
         
-        IVMeshData::IRequest::RequestStatus request_mesh_indicies(IVMeshData* vmesh, const float desired_quality, int** out_index_data, int* out_index_count) {
+        IVMeshData::IRequest::RequestStatus request_mesh_indicies(IVMeshData* vmesh, const float desired_quality, int** out_index_data, int* out_index_count, IVMeshData::IRequest::PrimType* out_prim_type) {
             int reload = 0;
             
             while (reload < 2) {
@@ -265,6 +265,7 @@ namespace SimKit {
                 if (this->cache[vmesh].index_data) {
                     if (out_index_data) *out_index_data = this->cache[vmesh].index_data;
                     if (out_index_count) *out_index_count = this->cache[vmesh].index_count;
+                    if (out_prim_type) *out_prim_type = this->cache[vmesh].loaded_mesh->get_primitive_type();
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
                 
@@ -276,7 +277,7 @@ namespace SimKit {
             SimKit::EmergencyError(err);
         };
         
-        IVMeshData::IRequest::RequestStatus request_mesh_indicies(IVMeshData* vmesh, const float desired_quality, gpu_context_type ctxt, gpu_data_type* out_data, int* out_count) {
+        IVMeshData::IRequest::RequestStatus request_mesh_indicies(IVMeshData* vmesh, const float desired_quality, gpu_context_type ctxt, gpu_data_type* out_data, int* out_count, IVMeshData::IRequest::PrimType* out_prim_type) {
             int reload = 0;
             
             while (reload < 2) {
@@ -293,6 +294,7 @@ namespace SimKit {
                 if (!this->cache[vmesh].hw[ctxt].index_isnull) {
                     if (out_data) *out_data = this->cache[vmesh].hw[ctxt].index_data;
                     if (out_count) *out_count = this->cache[vmesh].index_count;
+                    if (out_prim_type) *out_prim_type = this->cache[vmesh].loaded_mesh->get_primitive_type();
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
                 
@@ -305,6 +307,7 @@ namespace SimKit {
                         
                         if (out_data) *out_data = this->cache[vmesh].hw[ctxt].index_data;
                         if (out_count) *out_count = this->cache[vmesh].index_count;
+                        if (out_prim_type) *out_prim_type = this->cache[vmesh].loaded_mesh->get_primitive_type();
                         return this->cache[vmesh].loaded_mesh->check_request_status();
                     }
                 }
