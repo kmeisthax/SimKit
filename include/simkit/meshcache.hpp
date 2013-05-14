@@ -207,7 +207,7 @@ namespace SimKit {
             SimKit::EmergencyError(err);
         };
         
-        IVMeshData::IRequest::RequestStatus request_mesh_verticies(IVMeshData* vmesh, const float desired_quality, gpu_context_type ctxt, gpu_data_type* out_data) {
+        IVMeshData::IRequest::RequestStatus request_mesh_verticies(IVMeshData* vmesh, const float desired_quality, gpu_context_type ctxt, gpu_data_type* out_data, int* out_count) {
             int reload = 0;
             
             while (reload < 2) {
@@ -223,6 +223,7 @@ namespace SimKit {
                 
                 if (!this->cache[vmesh].hw[ctxt].vertex_isnull) {
                     if (out_data) *out_data = this->cache[vmesh].hw[ctxt].vertex_data;
+                    if (out_count) *out_count = this->cache[vmesh].vertex_count;
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
                 
@@ -234,6 +235,7 @@ namespace SimKit {
                         this->cache[vmesh].hw[ctxt].vertex_isnull = false;
                         
                         if (out_data) *out_data = this->cache[vmesh].hw[ctxt].vertex_data;
+                        if (out_count) *out_count = this->cache[vmesh].vertex_count;
                         return this->cache[vmesh].loaded_mesh->check_request_status();
                     }
                 }
@@ -274,7 +276,7 @@ namespace SimKit {
             SimKit::EmergencyError(err);
         };
         
-        IVMeshData::IRequest::RequestStatus request_mesh_indicies(IVMeshData* vmesh, const float desired_quality, gpu_context_type ctxt, gpu_data_type* out_data) {
+        IVMeshData::IRequest::RequestStatus request_mesh_indicies(IVMeshData* vmesh, const float desired_quality, gpu_context_type ctxt, gpu_data_type* out_data, int* out_count) {
             int reload = 0;
             
             while (reload < 2) {
@@ -290,6 +292,7 @@ namespace SimKit {
                 
                 if (!this->cache[vmesh].hw[ctxt].index_isnull) {
                     if (out_data) *out_data = this->cache[vmesh].hw[ctxt].index_data;
+                    if (out_count) *out_count = this->cache[vmesh].index_count;
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
                 
@@ -301,6 +304,7 @@ namespace SimKit {
                         this->cache[vmesh].hw[ctxt].index_isnull = false;
                         
                         if (out_data) *out_data = this->cache[vmesh].hw[ctxt].index_data;
+                        if (out_count) *out_count = this->cache[vmesh].index_count;
                         return this->cache[vmesh].loaded_mesh->check_request_status();
                     }
                 }
@@ -347,7 +351,7 @@ namespace SimKit {
             SimKit::EmergencyError(err);
         };
         
-        IVMeshData::IRequest::RequestStatus request_mesh_normals(IVMeshData* vmesh, const float desired_quality, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_normals) {
+        IVMeshData::IRequest::RequestStatus request_mesh_normals(IVMeshData* vmesh, const float desired_quality, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_normals, int* out_count) {
             int reload = 0;
             
             while (reload < 2) {
@@ -368,6 +372,8 @@ namespace SimKit {
                 
                 if (!this->cache[vmesh].hw[ctxt].normal_isnull) {
                     if (out_data) *out_data = this->cache[vmesh].hw[ctxt].normal_data;
+                    if (out_has_normals) *out_has_normals = this->cache[vmesh].loaded_mesh->has_normals();
+                    if (out_count) *out_count = this->cache[vmesh].normal_count;
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
                 
@@ -379,6 +385,8 @@ namespace SimKit {
                         this->cache[vmesh].hw[ctxt].normal_isnull = false;
                         
                         if (out_data) *out_data = this->cache[vmesh].hw[ctxt].normal_data;
+                        if (out_has_normals) *out_has_normals = this->cache[vmesh].loaded_mesh->has_normals();
+                        if (out_count) *out_count = this->cache[vmesh].normal_count;
                         return this->cache[vmesh].loaded_mesh->check_request_status();
                     }
                 }
@@ -410,7 +418,7 @@ namespace SimKit {
             this->request_mesh_attribs(vmesh, desired_quality, attrib_id, out_attrib_data, out_attrib_count, out_has_attrib);
         };
         
-        IVMeshData::IRequest::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const std::string attrib_name, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib) {
+        IVMeshData::IRequest::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const std::string attrib_name, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib, int* out_count) {
             this->ensure_request_exists(vmesh, desired_quality);
             
             if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
@@ -424,7 +432,7 @@ namespace SimKit {
                 return this->cache[vmesh].loaded_mesh->check_request_status();
             }
             
-            this->request_mesh_attribs(vmesh, desired_quality, attrib_id, ctxt, out_data, out_has_attrib);
+            this->request_mesh_attribs(vmesh, desired_quality, attrib_id, ctxt, out_data, out_has_attrib, out_count);
         };
         
         IVMeshData::IRequest::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const int attrib_id, float** out_attrib_data, int* out_attrib_count, bool* out_has_attrib) {
@@ -460,7 +468,7 @@ namespace SimKit {
             SimKit::EmergencyError(err);
         };
         
-        IVMeshData::IRequest::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const int attrib_id, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib) {
+        IVMeshData::IRequest::RequestStatus request_mesh_attribs(IVMeshData* vmesh, const float desired_quality, const int attrib_id, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib, int* out_count) {
             int reload = 0;
             
             while (reload < 2) {
@@ -483,6 +491,7 @@ namespace SimKit {
                 if (this->cache[vmesh].hw[ctxt].attrib_data.count(attrib_id) > 0) {
                     if (out_has_attrib) *out_has_attrib = this->cache[vmesh].loaded_mesh->has_attrib(attrib_id);
                     if (out_data) *out_data = this->cache[vmesh].hw[ctxt].attrib_data[attrib_id];
+                    if (out_count) *out_count = this->cache[vmesh].attrib_data[attrib_id].count;
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
                 
@@ -491,7 +500,9 @@ namespace SimKit {
                     this->cache[vmesh].hw[ctxt].attrib_data[attrib_id] = gpu_traits::upload_data(ctxt, this->cache[vmesh].attrib_data[attrib_id].data, this->cache[vmesh].attrib_data[attrib_id].count, ATTRIB_DATA, vmesh->get_usage_frequency(), &it_worked);
                     
                     if (it_worked) {
+                        if (out_has_attrib) *out_has_attrib = this->cache[vmesh].loaded_mesh->has_attrib(attrib_id);
                         if (out_data) *out_data = this->cache[vmesh].hw[ctxt].attrib_data[attrib_id];
+                        if (out_count) *out_count = this->cache[vmesh].attrib_data[attrib_id].count;
                         return this->cache[vmesh].loaded_mesh->check_request_status();
                     } else {
                         this->cache[vmesh].hw[ctxt].attrib_data.erase(attrib_id);
@@ -525,7 +536,7 @@ namespace SimKit {
             this->request_mesh_attribs(vmesh, desired_quality, uvmap_id, out_uvmapb_data, out_uvmap_count, out_has_attrib);
         };
         
-        IVMeshData::IRequest::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const std::string uvmap_name, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib) {
+        IVMeshData::IRequest::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const std::string uvmap_name, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_attrib, int out_count) {
             this->ensure_request_exists(vmesh, desired_quality);
             
             if (this->cache[vmesh].loaded_mesh->check_request_status() != IVMeshData::IRequest::REQUEST_COMPLETE) {
@@ -539,7 +550,7 @@ namespace SimKit {
                 return this->cache[vmesh].loaded_mesh->check_request_status();
             }
             
-            this->request_mesh_attribs(vmesh, desired_quality, uvmap_id, ctxt, out_data, out_has_attrib);
+            this->request_mesh_attribs(vmesh, desired_quality, uvmap_id, ctxt, out_data, out_has_attrib, out_count);
         };
         
         IVMeshData::IRequest::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const int uvmap_id, float** out_uvmap_data, int* out_uvmap_count, bool* out_has_uvmap) {
@@ -576,7 +587,7 @@ namespace SimKit {
             SimKit::EmergencyError(err);
         };
         
-        IVMeshData::IRequest::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const int uvmap_id, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_uvmap) {
+        IVMeshData::IRequest::RequestStatus request_mesh_uvmaps(IVMeshData* vmesh, const float desired_quality, const int uvmap_id, gpu_context_type ctxt, gpu_data_type* out_data, bool* out_has_uvmap, int* out_count) {
             int reload = 0;
             
             while (reload < 2) {
@@ -599,6 +610,7 @@ namespace SimKit {
                 if (this->cache[vmesh].hw[ctxt].uvmap_data.count(uvmap_id) > 0) {
                     if (out_has_uvmap) *out_has_uvmap = this->cache[vmesh].loaded_mesh->has_uvmap(uvmap_id);
                     if (out_data) *out_data = this->cache[vmesh].hw[ctxt].uvmap_data[uvmap_id];
+                    if (out_count) *out_count = this->cache[vmesh].uvmap_data[uvmap_id].count;
                     return this->cache[vmesh].loaded_mesh->check_request_status();
                 }
                 
@@ -607,7 +619,9 @@ namespace SimKit {
                     this->cache[vmesh].hw[ctxt].uvmap_data[uvmap_id] = gpu_traits::upload_data(ctxt, this->cache[vmesh].uvmap_data[uvmap_id].data, this->cache[vmesh].uvmap_data[uvmap_id].count, UVMAP_DATA, vmesh->get_usage_frequency(), &it_worked);
                     
                     if (it_worked) {
+                        if (out_has_uvmap) *out_has_uvmap = this->cache[vmesh].loaded_mesh->has_uvmap(uvmap_id);
                         if (out_data) *out_data = this->cache[vmesh].hw[ctxt].uvmap_data[uvmap_id];
+                        if (out_count) *out_count = this->cache[vmesh].uvmap_data[uvmap_id].count;
                         return this->cache[vmesh].loaded_mesh->check_request_status();
                     } else {
                         this->cache[vmesh].hw[ctxt].uvmap_data.erase(uvmap_id);
