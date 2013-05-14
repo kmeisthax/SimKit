@@ -8,18 +8,27 @@ SimKit::OpenGL::MeshCache::~MeshCache() {};
 
 GLuint SimKit::OpenGL::MeshCache::upload_data(SDL_GLContext ctxt, const float* data, const int count, const SimKit::TMeshCache<SDL_GLContext, GLuint, MeshCache>::MeshDataType type, const SimKit::IVMeshData::Usage usage, bool* out_success) {
     int err = SimKit::OpenGL::make_current(ctxt);
-
+    
     if (err != 0) {
         std::string err = "Failed to make context current when uploading mesh data.\n";
         SimKit::SDLEmergencyError(err);
         if (out_success) *out_success = FALSE;
         return 0;
     }
-
+    
     GLuint out_buf;
     glGenBuffers(1, &out_buf);
-    glBindBuffer(GL_ARRAY_BUFFER, out_buf);
-
+    
+    GLenum bind_type = GL_ARRAY_BUFFER;
+    switch (type) {
+        case SimKit::TMeshCache<SDL_GLContext, GLuint, MeshCache>::INDEX_DATA:
+            bind_type = GL_ELEMENT_ARRAY_BUFFER;
+        default:
+            break;
+    }
+    
+    glBindBuffer(bind_type, out_buf);
+    
     GLenum gl_usage;
     switch (usage) {
         case SimKit::IVMeshData::STATIC:
@@ -34,24 +43,34 @@ GLuint SimKit::OpenGL::MeshCache::upload_data(SDL_GLContext ctxt, const float* d
             break;
     }
     
-    glBufferData(GL_ARRAY_BUFFER, count * sizeof(float), data, gl_usage);
+    glBufferData(bind_type, count * sizeof(float), data, gl_usage);
+    glBindBuffer(bind_type, 0);
     if (out_success) *out_success = TRUE;
     return out_buf;
 };
 
 GLuint SimKit::OpenGL::MeshCache::upload_data(SDL_GLContext ctxt, const int* data, const int count, const SimKit::TMeshCache<SDL_GLContext, GLuint, MeshCache>::MeshDataType type, const SimKit::IVMeshData::Usage usage, bool* out_success) {
     int err = SimKit::OpenGL::make_current(ctxt);
-
+    
     if (err != 0) {
         std::string err = "Failed to make context current when uploading mesh data.\n";
         SimKit::SDLEmergencyError(err);
         if (out_success) *out_success = FALSE;
         return 0;
     }
-
+    
     GLuint out_buf;
     glGenBuffers(1, &out_buf);
-    glBindBuffer(GL_ARRAY_BUFFER, out_buf);
+    
+    GLenum bind_type = GL_ARRAY_BUFFER;
+    switch (type) {
+        case SimKit::TMeshCache<SDL_GLContext, GLuint, MeshCache>::INDEX_DATA:
+            bind_type = GL_ELEMENT_ARRAY_BUFFER;
+        default:
+            break;
+    }
+    
+    glBindBuffer(bind_type, out_buf);
     
     GLenum gl_usage;
     switch (usage) {
@@ -67,14 +86,15 @@ GLuint SimKit::OpenGL::MeshCache::upload_data(SDL_GLContext ctxt, const int* dat
             break;
     }
     
-    glBufferData(GL_ARRAY_BUFFER, count * sizeof(int), data, gl_usage);
+    glBufferData(bind_type, count * sizeof(int), data, gl_usage);
+    glBindBuffer(bind_type, 0);
     if (out_success) *out_success = TRUE;
     return out_buf;
 };
 
 GLuint SimKit::OpenGL::MeshCache::upload_data(SDL_GLContext ctxt, const float* data, const int count, const SimKit::TMeshCache<SDL_GLContext, GLuint, MeshCache>::MeshDataType type, const SimKit::IVMeshData::Usage usage, GLuint old_data, bool* out_success) {
     int err = SimKit::OpenGL::make_current(ctxt);
-
+    
     if (err != 0) {
         std::string err = "Failed to make context current when uploading mesh data.\n";
         SimKit::SDLEmergencyError(err);
@@ -85,7 +105,16 @@ GLuint SimKit::OpenGL::MeshCache::upload_data(SDL_GLContext ctxt, const float* d
     GLuint out_buf;
     if (glIsBuffer(old_data)) out_buf = old_data;
     else glGenBuffers(1, &out_buf);
-    glBindBuffer(GL_ARRAY_BUFFER, out_buf);
+    
+    GLenum bind_type = GL_ARRAY_BUFFER;
+    switch (type) {
+        case SimKit::TMeshCache<SDL_GLContext, GLuint, MeshCache>::INDEX_DATA:
+            bind_type = GL_ELEMENT_ARRAY_BUFFER;
+        default:
+            break;
+    }
+    
+    glBindBuffer(bind_type, out_buf);
     
     GLenum gl_usage;
     switch (usage) {
@@ -101,7 +130,8 @@ GLuint SimKit::OpenGL::MeshCache::upload_data(SDL_GLContext ctxt, const float* d
             break;
     }
     
-    glBufferData(GL_ARRAY_BUFFER, count * sizeof(float), data, gl_usage);
+    glBufferData(bind_type, count * sizeof(float), data, gl_usage);
+    glBindBuffer(bind_type, 0);
     if (out_success) *out_success = TRUE;
     return out_buf;
 };
@@ -119,7 +149,16 @@ GLuint SimKit::OpenGL::MeshCache::upload_data(SDL_GLContext ctxt, const int* dat
     GLuint out_buf;
     if (glIsBuffer(old_data)) out_buf = old_data;
     else glGenBuffers(1, &out_buf);
-    glBindBuffer(GL_ARRAY_BUFFER, out_buf);
+    
+    GLenum bind_type = GL_ARRAY_BUFFER;
+    switch (type) {
+        case SimKit::TMeshCache<SDL_GLContext, GLuint, MeshCache>::INDEX_DATA:
+            bind_type = GL_ELEMENT_ARRAY_BUFFER;
+        default:
+            break;
+    }
+    
+    glBindBuffer(bind_type, out_buf);
     
     GLenum gl_usage;
     switch (usage) {
@@ -135,7 +174,8 @@ GLuint SimKit::OpenGL::MeshCache::upload_data(SDL_GLContext ctxt, const int* dat
             break;
     }
     
-    glBufferData(GL_ARRAY_BUFFER, count * sizeof(int), data, gl_usage);
+    glBufferData(bind_type, count * sizeof(int), data, gl_usage);
+    glBindBuffer(bind_type, 0);
     if (out_success) *out_success = TRUE;
     return out_buf;
 };
