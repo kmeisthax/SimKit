@@ -71,10 +71,6 @@ namespace SimKit {
         
         std::map<IVMeshData*, CacheData> cache;
         
-        enum MeshDataType {
-            VERTEX_DATA, INDEX_DATA, NORMAL_DATA, UVMAP_DATA, ATTRIB_DATA
-        };
-        
         void ensure_request_exists(IVMeshData* vmesh, const float desired_quality) {
             if (this->cache.count(vmesh) == 0) {
                 this->add_mesh_to_cache(vmesh);
@@ -121,6 +117,10 @@ namespace SimKit {
         };
     protected:
         TMeshCache() {};
+        
+        enum MeshDataType {
+            VERTEX_DATA, INDEX_DATA, NORMAL_DATA, UVMAP_DATA, ATTRIB_DATA
+        };
     public:
         virtual ~TMeshCache() {
             while (this->cache.size() > 0) {
