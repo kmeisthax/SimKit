@@ -44,6 +44,11 @@ void SimKit::OpenGL::DeferredRenderer::setup_context() {
     glBindFragDataLocation(this->gbuf_program, 3, "gbuf_phongparams");
     glBindFragDataLocation(this->gbuf_program, 4, "gbuf_normal");
     glLinkProgram(this->gbuf_program);
+    glUniform1i(glGetUniformLocation(this->gbuf_program, "fi_texture_ambient"), 0);
+    glUniform1i(glGetUniformLocation(this->gbuf_program, "fi_texture_diffuse"), 1);
+    glUniform1i(glGetUniformLocation(this->gbuf_program, "fi_texture_specular"), 2);
+    glUniform1i(glGetUniformLocation(this->gbuf_program, "fi_texture_phongparams"), 3);
+    glUniform1i(glGetUniformLocation(this->gbuf_program, "fi_texture_normal"), 4);
     
     this->light_program = glCreateProgram();
     glAttachShader(this->light_program, this->null_vshader);
