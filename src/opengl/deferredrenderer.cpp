@@ -77,7 +77,7 @@ void SimKit::OpenGL::DeferredRenderer::setup_context() {
 void SimKit::OpenGL::DeferredRenderer::set_render_target(SDL_Window* wnd) {
     SimKit::OpenGL::make_current(wnd, &this->ctxt);
     this->wnd = wnd;
-
+    
     int w, h;
     SDL_GetWindowSize(this->wnd, &w, &h);
     this->viewport.x = 0;
@@ -88,7 +88,7 @@ void SimKit::OpenGL::DeferredRenderer::set_render_target(SDL_Window* wnd) {
     this->setup_context();
 };
 
-virtual void set_render_target(SDL_Window* wnd, const SDL_Rect viewport) {
+void SimKit::OpenGL::DeferredRenderer::set_render_target(SDL_Window* wnd, const SDL_Rect viewport) {
     SimKit::OpenGL::make_current(wnd, &this->ctxt);
     this->wnd = wnd;
     this->viewport = viewport;
