@@ -56,10 +56,10 @@ namespace SimKit {
             DeferredRenderer(ILoader* ldr);
             virtual ~DeferredRenderer();
             
-            virtual void set_render_target(SDL_Window* wnd) = 0;
-            virtual void set_render_target(SDL_Window* wnd, const SDL_Rect viewport) = 0;
+            virtual void set_render_target(SDL_Window* wnd);
+            virtual void set_render_target(SDL_Window* wnd, const SDL_Rect viewport);
             
-            virtual void set_scene_root(IScene* scene, ICamera* cam) = 0;
+            virtual void set_scene_root(IScene* scene, ICamera* cam);
         };
     };
 };
