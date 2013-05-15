@@ -8,6 +8,9 @@
 #include <istream>
 
 namespace SimKit {
+    class Material;
+    class IVMeshData;
+    
     namespace OpenGL {
         class RenderBase;
         
@@ -19,7 +22,7 @@ namespace SimKit {
             
             IScene* scene;
             ICamera* view;
-
+            
             SDL_Window* wnd;
             SDL_Rect viewport;
             SDL_GLContext ctxt;
@@ -33,11 +36,12 @@ namespace SimKit {
             GLuint null_vshader, light_fshader;
             GLuint light_program;
             
-            void render_node(ISceneNode* node, const glm::mat4 model, const glm::mat4 view, const glm::mat4 proj);
+            void set_material_parameter(Material* mat, IVMeshData* vmesh, const float mesh_quality, Material::Parameter param, GLuint program, const char* vertex_attrib, const char* uvmap_attrib, int image_unit);
+            void process_renderable(Material* mat, IVMeshData* vmesh);
             void render_pass(ICamera* cam);
             void gbuffer_pass();
             void deferred_pass();
-
+            
             void setup_context();
             void teardown_context();
         protected:

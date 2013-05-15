@@ -1,6 +1,8 @@
 #include <simkit.h>
 #include <simkit/opengl.h>
 
+#include <string>
+
 SimKit::OpenGL::DeferredRenderer::
 
 SimKit::OpenGL::DeferredRenderer::DeferredRenderer(SimKit::ILoader* ldr) : ldr(ldr), scene(NULL), view(NULL), wnd(NULL), ctxt(NULL) {};
@@ -94,4 +96,147 @@ virtual void set_render_target(SDL_Window* wnd, const SDL_Rect viewport) {
     this->setup_context();
 };
 
+void SimKit::OpenGL::DeferredRenderer::set_material_parameter(SimKit::Material* mat, SimKit::IVMeshData* vmesh, const float mesh_quality, SimKit::Material::Parameter param, GLuint program, const char* vertex_attrib, const char* uvmap_attrib, int image_unit) {
+    if (mat->get_material_mappings(param) & SimKit::Material::PT_CONSTANT) {
+        float c[4];
+        mat->get_material_constant(param, c, NULL);
+        glVertexAttrib4f(glGetAttribLocation(program, vertex_attrib), c[1], c[2], c[3], c[4]);
+    } else if (mat->get_material_mappings(param) & SimKit::Material::PT_ATTRIB) {
+        std::string attrib_name;
+        int attrib_id;
+        
+        mat->get_material_attrib(param, attrib_name, attrib_id);
+        
+        GLuint gl_attribdata;
+        bool attrib_is_valid;
+        
+        if (attrib_name != "" && SimKit::OpenGL::MeshCache::sys_meshcache.request_mesh_attribs(vmesh, mesh_quality, attrib_name, this->ctxt, &gl_attribdata, &attrib_is_valid) != IVMeshData::IRequest::REQUEST_COMPLETE) {
+            return; //Rendering not possible! Da.
+            //TODO: Clean up the GL state properly
+        } else if (SimKit::OpenGL::MeshCache::sys_meshcache.request_mesh_attribs(vmesh, mesh_quality, attrib_id, this->ctxt, &gl_attribdata, &attrib_is_valid, NULL) != IVMeshData::IRequest::REQUEST_COMPLETE) {
+            return;
+        }
+        
+        if (attrib_is_valid) {
+            glEnableVertexAttribArray(glGetAttribLocation(program, vertex_attrib));
+            glBindBuffer(GL_ARRAY_BUFFER, gl_attribdata);
+            glVertexAttribPointer(glGetAttribLocation(program, vertex_attrib), 4, GL_FLOAT, GL_FALSE, 0, 0);
+        }
+    } else if (mat->get_material_mappings(param) & SimKit::Material::PT_NORMAL) {
+        GLuint gl_normaldata;
+        bool normal_is_valid;
+        
+        if (SimKit::OpenGL::MeshCache::sys_meshcache.request_mesh_normals(vmesh, mesh_quality, this->ctxt, &gl_attribdata, &normal_is_valid, NULL) != IVMeshData::IRequest::REQUEST_COMPLETE) {
+            return;
+        }
+        
+        glEnableVertexAttribArray(glGetAttribLocation(program, vertex_attrib));
+        glBindBuffer(GL_ARRAY_BUFFER, gl_normaldata);
+        glVertexAttribPointer(glGetAttribLocation(program, vertex_attrib), 4, GL_FLOAT, GL_FALSE, 0, 0);
+    } else {
+        glVertexAttrib4f(glGetAttribLocation(program, vertex_attrib), 1.0f, 1.0f, 1.0f, 1.0f);
+    }
+    
+    if (mat->get_material_mappings(param) & SimKit::Material::PT_IMAGE) {
+        std::string uvmap_name;
+        int uvmap_id;
+        ParamSwizzle swiz;
+        IVImage* vtex;
+        
+        mat->get_material_image(param, uvmap_name, &uvmap_id, &swiz, &vtex, NULL);
+        
+        GLuint gl_uvmapdata;
+        bool uvmap_is_valid;
+        
+        if (uvmap_name != "" && SimKit::OpenGL::MeshCache::sys_meshcache.request_mesh_uvmaps(vmesh, mesh_quality, uvmap_name, this->ctxt, &gl_uvmapdata, &uvmap_is_valid, NULL) != SimKit::IVMeshData::IRequest::REQUEST_COMPLETE) {
+            return;
+        } else if (SimKit::OpenGL::MeshCache::sys_meshcache.request_mesh_uvmaps(vmesh, mesh_quality, uvmap_id, this->ctxt, &gl_uvmapdata, &uvmap_is_valid, NULL) != IVMeshData::IRequest::REQUEST_COMPLETE) {
+            return;
+        }
+        
+        GLuint gputex;
+        SDL_Rect reqrect;
+        float reqdpi;
+        
+        //TODO: more intelligent request rectangle and DPI selection
+        vtex->get_image_size(&reqrect->w, &reqrect->h, &reqdpi, NULL);
+        reqrect->x = 0;
+        reqrect->y = 0;
+        
+        SDL_Rect texrect;
+        float texdpi;
+        
+        if (SimKit::OpenGL::TextureCache::sys_texcache.request_texture_load(vtex, reqrect, reqdpi, this->ctxt, &gputex, &texrect, &texdpi) != SimKit::IVImage::IRequest::REQUEST_COMPLETE) {
+            //Can't use this material right now
+            return;
+        }
+        
+        if (uvmap_is_valid) {
+            glEnableVertexAttribArray(glGetAttribLocation(program, uvmap_attrib));
+            glBindBuffer(GL_ARRAY_BUFFER, gl_uvmapdata);
+            glVertexAttribPointer(glGetAttribLocation(program, uvmap_attrib), 2, GL_FLOAT, GL_FALSE, 0, 0);
+            
+            glActiveTexture(GL_TEXTURE0 + 0);
+            glBindTexture(GL_TEXTURE2D, gputex);
+        }
+    }
+}
 
+void SimKit::OpenGL::DeferredRenderer::process_renderable(SimKit::Material* mat, SimKit::IVMeshData* vmesh) {
+    float mesh_quality; //in the future: support mesh LODs. Currently we just use the max quality parameter.
+    vmesh->get_quality_range(NULL, &mesh_quality, NULL);
+    
+    if (mat) {
+        this->set_material_parameter(mat, vmesh, mesh_quality, SimKit::Material::PARAM_AMBIENT, this->gbuf_program, "vi_ambient", "vi_uvmap_ambient", 0);
+        this->set_material_parameter(mat, vmesh, mesh_quality, SimKit::Material::PARAM_DIFFUSE, this->gbuf_program, "vi_diffuse", "vi_uvmap_diffuse", 1);
+        this->set_material_parameter(mat, vmesh, mesh_quality, SimKit::Material::PARAM_SPECULAR, this->gbuf_program, "vi_specular", "vi_uvmap_specular", 2);
+        this->set_material_parameter(mat, vmesh, mesh_quality, SimKit::Material::PARAM_SHININESS, this->gbuf_program, "vi_phongparams", "vi_uvmap_phongparams", 3);
+        this->set_material_parameter(mat, vmesh, mesh_quality, SimKit::Material::PARAM_NORMAL, this->gbuf_program, "vi_normal", "vi_uvmap_normal", 4);
+    } else {    //No material? Render everything white!
+        glVertexAttrib4f(glGetAttribLocation(this->gbuf_program, "vi_ambient"), 1.0f, 1.0f, 1.0f, 1.0f);
+        glVertexAttrib4f(glGetAttribLocation(this->gbuf_program, "vi_diffuse"), 1.0f, 1.0f, 1.0f, 1.0f);
+        glVertexAttrib4f(glGetAttribLocation(this->gbuf_program, "vi_specular"), 1.0f, 1.0f, 1.0f, 1.0f);
+        glVertexAttrib4f(glGetAttribLocation(this->gbuf_program, "vi_phongparams"), 1.0f, 1.0f, 1.0f, 1.0f);
+        glVertexAttrib3f(glGetAttribLocation(this->gbuf_program, "vi_normal"), 1.0f, 1.0f, 1.0f);
+        glVertexAttrib2f(glGetAttribLocation(this->gbuf_program, "vi_uvmap_ambient"), 1.0f, 1.0f);
+        glVertexAttrib2f(glGetAttribLocation(this->gbuf_program, "vi_uvmap_diffuse"), 1.0f, 1.0f);
+        glVertexAttrib2f(glGetAttribLocation(this->gbuf_program, "vi_uvmap_specular"), 1.0f, 1.0f);
+        glVertexAttrib2f(glGetAttribLocation(this->gbuf_program, "vi_uvmap_phongparams"), 1.0f, 1.0f);
+        glVertexAttrib2f(glGetAttribLocation(this->gbuf_program, "vi_uvmap_normal"), 1.0f, 1.0f);
+    }
+    
+    GLuint gverts, gindicies;
+    int vertcnt, indexcnt;
+    
+    GLenum gprimtype;
+    SimKit::IVMeshData::IRequest::PrimType primtype,
+    
+    if (SimKit::OpenGL::MeshCache::sys_meshcache.request_mesh_verticies(vmesh, mesh_quality, this->ctxt, &gverts, &vertcnt) != SimKit::IVMeshData::IRequest::REQUEST_COMPLETE) {
+        return; //can't process renderable today
+    }
+    
+    if (SimKit::OpenGL::MeshCache::sys_meshcache.request_mesh_indicies(vmesh, mesh_quality, this->ctxt, &gindicies, &indexcnt, &primtype) != SimKit::IVMeshData::IRequest::REQUEST_COMPLETE) {
+        return; //you will not render to space today
+    }
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gindicies);
+    glBindBuffer(GL_ARRAY_BUFFER, gverts);
+    
+    glEnable(GL_PRIMITIVE_RESTART);
+    glPrimitiveRestartIndex(vertcnt);
+    
+    switch (primtype) {
+        default:
+        case SimKit::IVMeshData::IRequest::TRIANGLES:
+            gprimtype = GL_TRIANGLES;
+            break;
+        case SimKit::IVMeshData::IRequest::TRIANGLE_STRIPS:
+            gprimtype = GL_TRIANGLE_STRIP;
+            break;
+        case SimKit::IVMeshData::IRequest::TRIANGLE_FANS:
+            gprimtype = GL_TRIANGLE_FAN;
+            break;
+    }
+    
+    glDrawElements(gprimtype, indexcnt, GL_UNSIGNED_INT, NULL);
+};
