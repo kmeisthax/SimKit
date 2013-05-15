@@ -8,6 +8,16 @@ SimKit::OpenGL::DeferredRenderer::
 SimKit::OpenGL::DeferredRenderer::DeferredRenderer(SimKit::ILoader* ldr) : ldr(ldr), scene(NULL), view(NULL), wnd(NULL), ctxt(NULL) {};
 SimKit::OpenGL::DeferredRenderer::~DeferredRenderer() {};
 
+void SimKit::OpenGL::DeferredRenderer::set_render_target(SDL_Window* wnd) {
+    SDL_Rect vp;
+    
+};
+
+void SimKit::OpenGL::DeferredRenderer::set_render_target(SDL_Window* wnd, const SDL_Rect viewport) {
+    this->wnd = wnd;
+    this->viewport = viewport;
+};
+
 void SimKit::OpenGL::DeferredRenderer::setup_context() {
     std::istream* ssrc = this->ldr->open_resource("opengl/gbuffer_vertex.glsl");
     this->gbuf_vshader = this->compile_shader(GL_VERTEX_SHADER, ssrc);
@@ -72,6 +82,10 @@ void SimKit::OpenGL::DeferredRenderer::setup_context() {
     glBindTexture(GL_TEXTURE_2D, this->gbuf_depth);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, this->viewport.w, this->viewport.h, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL);
     glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this->gbuf_normal, 0);
+};
+
+void SimKit::OpenGL::DeferredRenderer::teardown_context() {
+    //TODO: Clean up previous context if any
 };
 
 void SimKit::OpenGL::DeferredRenderer::set_render_target(SDL_Window* wnd) {
