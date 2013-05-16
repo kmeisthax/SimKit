@@ -3,6 +3,8 @@
 
 #include <simkit.h>
 
+#include <glm/glm.hpp>
+
 namespace SimKit {
     class ISceneNode;
 
@@ -30,6 +32,8 @@ namespace SimKit {
             ISceneNode* cur_elem;
             //Stack of iterators up to but not including cur_elem.
             std::vector<std::vector<ISceneNode*>::iterator> i_stack;
+            //Stack of model-to-scene premulitiplied matricies
+            std::vector<glm::mat4> m_stack;
             
             bool begin, end;
             
@@ -63,6 +67,8 @@ namespace SimKit {
             bool operator>=(iterator& f);
             */
             iterator& operator[](int fwd);
+            
+            glm::mat4 get_modelmatr();
         };
         
         virtual iterator begin();
